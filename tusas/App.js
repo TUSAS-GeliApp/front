@@ -32,18 +32,17 @@ function HomeStack({navigation}){
                 let iconName;
 
                 if (route.name === 'Ana sayfa') {
-                iconName = "home-outline" ;
-                } else if (route.name === 'Etkinlikler') {
-                iconName = "planet-outline" ;
+                    iconName = "home" ;
+                    size *= 1.2;
                 } else if (route.name === 'Podcastler') {
-                    iconName = "mic-outline" ;
+                    iconName = "mic-circle-outline" ;
+                }else if (route.name === 'Etkinlikler') {
+                    iconName = "planet-outline" ;
                 }else if (route.name === 'Bulten') {
                     iconName = "newspaper-outline" ;
                 }else if (route.name === 'Videolar') {
                     iconName = "videocam-outline" ;
                 }
-
-                // You can return any component that you like here!
                 return <Ionicons name={iconName} size={size} color={color} />;
 
             },
@@ -52,14 +51,7 @@ function HomeStack({navigation}){
             })}
             
             >
-            <Tab.Screen name="Ana sayfa" component={Homepage} options={{
-                headerStyle: { height: 100},
-                headerTitleAlign: 'center',
-                headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
-                                        <FontAwesome name="bars" size={24} color="black" style={{paddingRight:30}}/>
-                                    </TouchableOpacity>),
-                headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
-                ) }} />    
+              
             <Tab.Screen name="Etkinlikler" component={Etkinlikler} options={{
                 headerStyle: { height: 100},
                 headerTitleAlign: 'center',
@@ -76,6 +68,14 @@ function HomeStack({navigation}){
                                     </TouchableOpacity>),
                 headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
                 ) }} />      
+            <Tab.Screen name="Ana sayfa" component={Homepage} options={{
+                headerStyle: { height: 100},
+                headerTitleAlign: 'center',
+                headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
+                                        <FontAwesome name="bars" size={24} color="black" style={{paddingRight:30}}/>
+                                    </TouchableOpacity>),
+                headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
+                ) }} />  
             <Tab.Screen name="Videolar" component={Videolar} options={{
                 headerStyle: { height: 100},
                 headerTitleAlign: 'center',
@@ -99,74 +99,160 @@ function HomeStack({navigation}){
 function Main({navigation}){
     return(
         <Drawer.Navigator initialRouteName="Ana sayfa"  >
-                <Drawer.Screen name="profil" component={Profile} 
-                            options={{ 
-                                    headerShown:false,
-                                    drawerPosition:'right',
-                                    drawerStyle: {
-                                        width: '60%', 
-                                        alignItems:'center', 
-                                        backgroundColor: 'rgb(41, 64, 153)'
-                                      },
-                                    drawerType: 'front',
-                                    overlayVisible:true,
-                                    sceneAnimationEnabled: true,
-                                    keyboardDismissMode:true,
-                                    drawerActiveBackgroundColor: 'rgb(41, 64, 153)',
-
-                                    title:'Profil',
-                                    drawerIcon: ({focused, size}) => (
-                                        <View style={{paddingLeft: "30%",width:"70%",height:'100%', paddingBottom:"50%"}}>
-                                            <Avatar.Text size={94} label="FK" style={{backgroundColor:'white'}}/>  
-                                        <Text style={{color:'white',width:'200%',fontSize:18, paddingTop:20}}>Fevzi KILAS</Text>
-                                    </View>
-                                        
-                                    ),
-                                    
-                                    }}
-                                    
-                                    />
-
-                <Drawer.Screen name="Ana sayfa" component={HomeStack}  
-                            options={{ 
+            <Drawer.Screen name="profil" component={Profile} 
+                        options={{ 
                                 headerShown:false,
                                 drawerPosition:'right',
                                 drawerStyle: {
                                     width: '60%', 
                                     alignItems:'center', 
-                                    backgroundColor: 'rgb(41, 64, 153)',
-                                },
+                                    backgroundColor: 'rgb(41, 64, 153)'
+                                    },
                                 drawerType: 'front',
                                 overlayVisible:true,
                                 sceneAnimationEnabled: true,
                                 keyboardDismissMode:true,
-                                drawerActiveBackgroundColor: '#rgba(256,256,256,0.5)',
-                                title:'',
+                                drawerActiveBackgroundColor: 'rgb(41, 64, 153)',
+
+                                title:'Profil',
                                 drawerIcon: ({focused, size}) => (
-                                    <View style={{flexDirection:'row',justifyContent:'space-between', alignItems:'center'}}>
-                                        <Ionicons  
-                                            name="home-sharp"
-                                            size={size}
-                                            color={focused ? 'white' : 'lightgrey'}
-                                            
-                                            
-                                        />
-                                        <Text style={{color:'white'}}>{"   "}Ana Sayfa</Text>
-                                    </View>
-                                 ),
+                                    <View style={{paddingLeft: "30%",width:"70%",height:'100%', paddingBottom:"50%"}}>
+                                        <Avatar.Text size={94} label="FK" style={{backgroundColor:'white'}}/>  
+                                    <Text style={{color:'white',width:'200%',fontSize:18, paddingTop:20}}>Fevzi KILAS</Text>
+                                </View>
+                                    
+                                ),
                                 
-                                    
-                                    }}/>
-                
-                                    
-                
-            </Drawer.Navigator>  
+                                }}
+                                
+                                />
+
+            <Drawer.Screen name="Ana sayfa" component={HomeStack}  
+                        options={{ 
+                            headerShown:false,
+                            drawerPosition:'right',
+                            drawerStyle: {
+                                width: '60%', 
+                                alignItems:'center', 
+                                backgroundColor: 'rgb(41, 64, 153)',
+                            },
+                            drawerType: 'front',
+                            overlayVisible:true,
+                            sceneAnimationEnabled: true,
+                            keyboardDismissMode:true,
+                            drawerActiveBackgroundColor: '#rgba(256,256,256,0.5)',
+                            title:'',
+                            drawerIcon: ({focused, size}) => (
+                                <View style={{flexDirection:'row',justifyContent:'space-between', alignItems:'center'}}>
+                                    <Ionicons  
+                                        name="home"
+                                        size={size}
+                                        color={focused ? 'white' : 'lightgrey'}
+                                        
+                                        
+                                    />
+                                    <Text style={{color:'white'}}>{"   "}Ana Sayfa</Text>
+                                </View>
+                                ),
+                            
+                                
+                                }}/>
+                                
+            <Drawer.Screen name="Bildirimler" component={HomeStack}  
+                        options={{ 
+                            headerShown:false,
+                            drawerPosition:'right',
+                            drawerStyle: {
+                                width: '60%', 
+                                alignItems:'center', 
+                                backgroundColor: 'rgb(41, 64, 153)',
+                            },
+                            drawerType: 'front',
+                            overlayVisible:true,
+                            sceneAnimationEnabled: true,
+                            keyboardDismissMode:true,
+                            drawerActiveBackgroundColor: '#rgba(256,256,256,0.5)',
+                            title:'',
+                            drawerIcon: ({focused, size}) => (
+                                <View style={{flexDirection:'row',justifyContent:'space-between', alignItems:'center'}}>
+                                    <Ionicons 
+                                        name="person"
+                                        size={size}
+                                        color={focused ? 'white' : 'lightgrey'}
+                                        
+                                        
+                                    />
+                                    <Text style={{color:'white'}}>{"   "}Kişiler</Text>
+                                </View>
+                                ),
+                            
+                                
+                                }}/>
+            <Drawer.Screen name="Kontaklar" component={HomeStack}  
+                        options={{ 
+                            headerShown:false,
+                            drawerPosition:'right',
+                            drawerStyle: {
+                                width: '60%', 
+                                alignItems:'center', 
+                                backgroundColor: 'rgb(41, 64, 153)',
+                            },
+                            drawerType: 'front',
+                            overlayVisible:true,
+                            sceneAnimationEnabled: true,
+                            keyboardDismissMode:true,
+                            drawerActiveBackgroundColor: '#rgba(256,256,256,0.5)',
+                            title:'',
+                            drawerIcon: ({focused, size}) => (
+                                <View style={{flexDirection:'row',justifyContent:'space-between', alignItems:'center'}}>
+                                    <Ionicons 
+                                        name="notifications"
+                                        size={size}
+                                        color={focused ? 'white' : 'lightgrey'}
+                                        
+                                        
+                                    />
+                                    <Text style={{color:'white'}}>{"   "}Bildirimler</Text>
+                                </View>
+                                ),
+                            
+                                
+                                }}/>
             
-         
+            <Drawer.Screen name="Settings" component={HomeStack}  
+                        options={{ 
+                            headerShown:false,
+                            drawerPosition:'right',
+                            drawerStyle: {
+                                width: '60%', 
+                                alignItems:'center', 
+                                backgroundColor: 'rgb(41, 64, 153)',
+                            },
+                            drawerType: 'front',
+                            overlayVisible:true,
+                            sceneAnimationEnabled: true,
+                            keyboardDismissMode:true,
+                            drawerActiveBackgroundColor: '#rgba(256,256,256,0.5)',
+                            title:'',
+                            drawerIcon: ({focused, size}) => (
+                                <View style={{flexDirection:'row',justifyContent:'space-between', alignItems:'center'}}>
+                                    <Ionicons 
+                                        name="settings"
+                                        size={size}
+                                        color={focused ? 'white' : 'lightgrey'}
+                                        
+                                        
+                                    />
+                                    <Text style={{color:'white'}}>{"   "}Settings</Text>
+                                </View>
+                                ),
+                            
+                                
+                                }}/>
+            
+        </Drawer.Navigator>  
     );
 }
-
-
 export default function App() {
     const isSignedIn = true;
     return (

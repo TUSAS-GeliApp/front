@@ -13,8 +13,8 @@ export default function Profile({navigation}) {
         katilim: [
             { id: 1, title: "Hangar Kampus 2021"},
             { id: 2, title: "Hangar Kampus 2022"},
-            /*{ id: 3, title: "Hangar Kampus 2023/2022"},
-             { id: 4, title: "Hangar 1"},
+          /*{ id: 3, title: "Hangar Kampus 2023/2022"},
+            { id: 4, title: "Hangar 1"},
             { id: 5, title: "Hangar 2024"},
             { id: 6, title: "Hangar Kampus 2023"},
             { id: 7, title: "Inavasyon Soylesileri 2023"}, */

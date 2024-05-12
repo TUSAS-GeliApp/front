@@ -10,9 +10,10 @@ export default function Podcastler({navigation}) {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
 
+
     const dataForPodcast = {
         podcast: [
-            { id: 1, artist_name: "John Doe", Image: {uri: "https://t4.ftcdn.net/jpg/04/15/31/79/240_F_415317980_or3t3loJGxdXQrSvybkF995wx6YIrHVV.jpg"}, title: "Geleceğe Yolculuk: Yapay Zeka ve İnsanlık", content: "Teknolojinin geleceği ve yapay zeka konusundaki gelişmeleri tartışıyoruz."},
+            { id: 1, artist_name: "John Doe", Image: {uri: "https://t4.ftcdn.net/jpg/04/15/31/79/240_F_415317980_or3t3loJGxdXQrSvybkF995wx6YIrHVV.jpg"}, title: "Geleceğe Yolculuk: Yapay Zeka ve İnsanlık", content: "Teknolojinin geleceği ve yapay zeka konusundaki gelişmeleri tartışıyoruz.", link:"https://pod.link/"},
             { id: 2, artist_name: "Jane Smith", Image: {uri: "https://images.unsplash.com/photo-1579762593217-46655e4e7efc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXJ0d29ya3xlbnwwfDB8MHx8fDI%3D"}, title: "Kültür ve Teknoloji: Sanatın Dijital Dönüşümü", content: "Sanatın teknolojiyle birleştiği ve yeni medya sanatının doğuşunu inceliyoruz.", link:"https://pod.link/"},
             { id: 3, artist_name: "Michael Johnson", Image: {uri: "https://images.unsplash.com/photo-1516061603506-fd4dc1932278?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8YXJ0d29ya3xlbnwwfDB8MHx8fDI%3D"}, title: "Gezegenimiz ve Gelecek: Sürdürülebilirlik ve Çevre", content: "Dünya'nın geleceği ve sürdürülebilirlik üzerine uzman görüşlerini dinliyoruz.", link:"https://pod.link/"},
             { id: 4, artist_name: "Emily Williams", Image: {uri: "https://images.unsplash.com/photo-1612892483236-52d32a0e0ac1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8bWFyc3xlbnwwfDB8MHx8fDI%3D"}, title: "Uzayın Sırları: Mars ve Uzay Keşifleri", content: "Uzay araştırmaları ve Mars'a insanlı misyonların geleceği hakkında konuşuyoruz.", link:"https://pod.link/"},

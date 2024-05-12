@@ -26,12 +26,12 @@ const Drawer = createDrawerNavigator();
 
 function HomeStack({navigation}){
     return (
-        <Tab.Navigator
+        <Tab.Navigator 
             screenOptions={({ route }) => ({
             tabBarIcon: ({ color, size }) => {
                 let iconName;
 
-                if (route.name === 'Ana sayfa') {
+                if (route.name === 'Anasayfa') {
                     iconName = "home" ;
                     size *= 1.2;
                 } else if (route.name === 'Podcastler') {
@@ -46,49 +46,56 @@ function HomeStack({navigation}){
                 return <Ionicons name={iconName} size={size} color={color} />;
 
             },
-            tabBarActiveTintColor: 'tomato',
-            tabBarInactiveTintColor: 'gray',
+            tabBarActiveTintColor: 'rgba(237, 52, 53, 0.9)',
+            tabBarInactiveTintColor: 'rgba(41, 64, 153, 0.5)',
             })}
-            
+            initialRouteName="Anasayfa"
+
             >
               
             <Tab.Screen name="Etkinlikler" component={Etkinlikler} options={{
-                headerStyle: { height: 100},
+                headerStyle: { height: 120},
                 headerTitleAlign: 'center',
+                headerTitleStyle:{fontSize:25, fontWeight:'700'},
                 headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
-                                        <FontAwesome name="bars" size={24} color="black" style={{paddingRight:30}}/>
+                                        <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
                                     </TouchableOpacity>),
                 headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
                 ) }} />      
             <Tab.Screen name="Podcastler" component={Podcastler} options={{
-                headerStyle: { height: 100},
+                headerStyle: { height: 120},
                 headerTitleAlign: 'center',
+                headerTitleStyle:{fontSize:25, fontWeight:'700'},
                 headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
-                                        <FontAwesome name="bars" size={24} color="black" style={{paddingRight:30}}/>
+                                        <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
                                     </TouchableOpacity>),
                 headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
                 ) }} />      
-            <Tab.Screen name="Ana sayfa" component={Homepage} options={{
-                headerStyle: { height: 100},
+            <Tab.Screen name="Anasayfa" component={Homepage} options={{
+                headerStyle: {height: 120},
                 headerTitleAlign: 'center',
+                headerTitleStyle:{fontSize:25, fontWeight:'700'},
+                
                 headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
-                                        <FontAwesome name="bars" size={24} color="black" style={{paddingRight:30}}/>
+                                        <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
                                     </TouchableOpacity>),
                 headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
                 ) }} />  
             <Tab.Screen name="Videolar" component={Videolar} options={{
-                headerStyle: { height: 100},
+                headerStyle: { height: 120},
                 headerTitleAlign: 'center',
+                headerTitleStyle:{fontSize:25, fontWeight:'700'},
                 headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
-                                        <FontAwesome name="bars" size={24} color="black" style={{paddingRight:30}}/>
+                                        <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
                                     </TouchableOpacity>),
                 headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
                 ) }} />      
             <Tab.Screen name="Bulten" component={Bulten} options={{
-                headerStyle: { height: 100},
+                headerStyle: { height: 120},
                 headerTitleAlign: 'center',
+                headerTitleStyle:{fontSize:25, fontWeight:'700'},
                 headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
-                                        <FontAwesome name="bars" size={24} color="black" style={{paddingRight:30}}/>
+                                        <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
                                     </TouchableOpacity>),
                 headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
                 ) }} />  
@@ -98,7 +105,7 @@ function HomeStack({navigation}){
 
 function Main({navigation}){
     return(
-        <Drawer.Navigator initialRouteName="Ana sayfa"  >
+        <Drawer.Navigator initialRouteName="Ana sayfa">
             <Drawer.Screen name="profil" component={Profile} 
                         options={{ 
                                 headerShown:false,
@@ -158,7 +165,7 @@ function Main({navigation}){
                                 
                                 }}/>
                                 
-            <Drawer.Screen name="Bildirimler" component={HomeStack}  
+            <Drawer.Screen name="Kontaktlar" component={HomeStack}  
                         options={{ 
                             headerShown:false,
                             drawerPosition:'right',
@@ -188,7 +195,7 @@ function Main({navigation}){
                             
                                 
                                 }}/>
-            <Drawer.Screen name="Kontaklar" component={HomeStack}  
+            <Drawer.Screen name="Bildirimler" component={HomeStack}  
                         options={{ 
                             headerShown:false,
                             drawerPosition:'right',
@@ -257,7 +264,7 @@ export default function App() {
     const isSignedIn = true;
     return (
         <NavigationContainer >
-            <Stack.Navigator>
+            <Stack.Navigator initialRouteName="Home">
                     {isSignedIn ? (
                 <>
                     <Stack.Screen name="Home" component={Main} options={{headerShown: false}} />                    

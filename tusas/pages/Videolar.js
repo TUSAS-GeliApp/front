@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image, Button, Modal, TouchableWithoutFeedback, ScrollView, Text, TextInput, View, TouchableOpacity, Switch, Alert } from "react-native";
+import { Image, Button, Modal, TouchableWithoutFeedback, ScrollView, Text, TextInput, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 import { FlatList } from "react-native-gesture-handler";
@@ -28,7 +28,7 @@ export default function Videolar({navigation}) {
 
 
     const [videoInfo, setVideoInfo] = useState(null);
-    const [videoLink, setVideoLink] = useState("https://www.youtube.com/watch?v=HYdkSVDT-Vs");
+    const [videoLink, setVideoLink] = useState(null);
 
     useEffect(() => {
       const fetchVideoInfo = async () => {
@@ -43,23 +43,35 @@ export default function Videolar({navigation}) {
         }
       };
   
-      if (videoLink) {
-        fetchVideoInfo();
-      }
+        fetchVideoInfo("https");
     }, [videoLink]);
   
     const extractVideoId = (videoLink) => {
-      const matches = videoLink.match(/[?&]v=([^&]+)/);
-      return matches ? matches[1] : null;
+        if  (!videoLink || typeof videoLink !== 'string'){
+
+        }else {
+            const matches = videoLink.match(/[?&]v=([^&]+)/);
+            return matches ? matches[1] : null;
+        }
+      
     };
-  
+    let title = ""; 
+    let description = ""; 
+    let publishedAt = ""; 
+    let duration = ""; 
     if (!videoInfo) {
-      return <Text>Loading...</Text>;
+        <View style={{flex:1, justifyContent:'center', alignContent:'center'}}><ActivityIndicator /></View>;
+    }else{
+        ({ snippet, contentDetails } = videoInfo);
+        ({ title, description, publishedAt } = snippet);
+        ({ duration } = contentDetails);
     }
-  
-    const { snippet, contentDetails } = videoInfo;
-    const { title, description, publishedAt } = snippet;
-    const { duration } = contentDetails;
+    
+    
+    
+    
+
+    
     
     return(
 

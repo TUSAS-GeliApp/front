@@ -130,13 +130,13 @@ export default function Program({ navigation }) {
                                 content = content.trim();
                                 if (content.trim().startsWith('//') && content.trim().endsWith('//')) {
                                     return (
-                                        <Text key={index} style={{ fontWeight: 'bold', textAlign: 'center', fontSize: 22}}>
+                                        <Text key={index} style={{ fontWeight: 'bold', textAlign: 'center', fontSize: 22, textShadowRadius:2, textShadowColor:'#rgb(237, 52, 53)'}}>
                                             {content.replace(/\/\//g, '\n\n')}
                                         </Text>
                                     );
                                 } else if (content.trim().startsWith('/') && content.trim().endsWith('/')) {
                                     return (
-                                        <Text key={index} style={{ fontWeight: 'bold', fontSize: 18 }}>
+                                        <Text key={index} style={{ fontWeight: 'bold', fontSize: 18 , textShadowRadius:1, textShadowColor:'#rgb(237, 52, 53)'}}>
                                             {content.replace(/\//g, '\n')}
                                         </Text>
                                     );
@@ -152,7 +152,7 @@ export default function Program({ navigation }) {
                     <Text style={{height:2, backgroundColor:'black', width:'100%', marginBottom:30, marginTop:-70}}/>
                     
                     <View style={{ alignItems: 'center' }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 35, marginBottom: 10 }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 35, marginBottom: 10, textShadowRadius:2, textShadowColor:'rgb(41, 64, 153)' }}>
                             Konuşmacılar
                         </Text>
                         {item.konusmacilar.map((konuşmacı, index) => (
@@ -161,7 +161,7 @@ export default function Program({ navigation }) {
                                     source={{ uri: konuşmacı.link }}
                                     style={{ width: 100, height: 100, borderRadius: 50 }}
                                 />
-                                <Text style={{ fontWeight: 'bold', marginTop: 10 }}>{konuşmacı.name}</Text>
+                                <Text style={{ fontWeight: 'bold', marginTop: 10, textShadowRadius:1, textShadowColor:'rgb(41, 64, 153)',fontSize:20 }}>{konuşmacı.name}</Text>
                                 <Text style={{textAlign:'center'}}>{konuşmacı.info}</Text>
                             </View>
                         ))}
@@ -179,7 +179,8 @@ export default function Program({ navigation }) {
                                 content = content.trim();
                                 if (content.trim().endsWith('?')) {
                                     return (
-                                        <Text key={index} style={{ fontWeight: 'bold', textAlign: 'left', fontSize: 22 }}>
+                                        <Text key={index} style={{ fontWeight: 'bold', textAlign: 'left', fontSize: 22, textShadowRadius:2, textShadowColor:'#rgb(237, 52, 53)' }}>
+
                                             {'\n'}
                                             {'\n'}
                                             {content}
@@ -196,11 +197,11 @@ export default function Program({ navigation }) {
                     {/* Apply Program  */}
                     <View style={{ width: "100%", alignItems:'center'}}>
                         <Text style={{height:2, backgroundColor:'black', width:'100%', marginBottom:20}}/>
-                        <Text style={{fontSize:25, fontWeight:'bold'}}>
-                            Programa kayıt olabilmek icin!
+                        <Text style={{fontSize:25, fontWeight:'bold', textShadowRadius:2, textShadowColor:'rgb(41, 64, 153)'}}>
+                            Programa kayıt olabilmek için!
                         </Text>
                         <TouchableOpacity>
-                            <Text style={{fontSize:25, backgroundColor:'black', color: 'white', padding: 20, borderRadius: 10, marginTop: 20, marginBottom: 20, width: '80%', shadowOpacity:0.4 }}>
+                            <Text style={{fontSize:25, backgroundColor:'black', color: 'white', padding: 20, borderRadius: 10, marginTop: 20, marginBottom: 20, width: '80%', shadowOpacity:0.4, textShadowRadius:2, textShadowColor:'#rgb(237, 52, 53)' }}>
                                 Kayıt Ol
                             </Text>
                         </TouchableOpacity>
@@ -209,7 +210,7 @@ export default function Program({ navigation }) {
                     {/* Harita */}
                     <Text style={{height:2, backgroundColor:'black', width:'100%', marginTop:30}}/>
                     <View style={{ width: "100%", height: 500 }}>
-                        <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: 'bold', marginTop: 30, marginBottom: 30 }}>
+                        <Text style={{ fontSize: 30, textAlign: 'center', fontWeight: 'bold', marginTop: 30, marginBottom: 30 , textShadowRadius:2, textShadowColor:'#rgb(237, 52, 53)'}}>
                             Etkinlik Alanına Gitmek İçin
                         </Text>
                         <MapView
@@ -252,7 +253,7 @@ export default function Program({ navigation }) {
                                         left: Platform.OS === 'ios' ? 10 : 5,
                                     }}
                                 >
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', shadowRadius:1, shadowColor:'black' }}>
                                         <Ionicons name="chevron-back-sharp" color={Platform.OS === 'ios' ? 'white' : 'black'} style={{ fontSize: 40, shadowOpacity:1  }} />
                                         <Text style={{ color: Platform.OS === 'ios' ? 'white' : 'black', fontWeight: 'bold', fontSize: 25, shadowOpacity:1  }}>{"Back"}</Text>
                                     </View>

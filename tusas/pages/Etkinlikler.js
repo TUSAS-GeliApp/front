@@ -38,7 +38,7 @@ export default function Etkinlikler({navigation}) {
                 is_online: false,
             },
             { 
-                id: 3, 
+                id: 1563, 
                 event_name: "Demo Day", 
                 event_content: `HANGAR Kurum içi Girişimcilik Pilot Programımız kapsamında gerçekleşecek Demo Day etkinliği 6 Mart Çarşambagünü düzenlenecektir. 3 ay boyunca Hızlandırma Programı kapsamında iş fikirleri üzerinde çalışan kurum içi girişimcilerden oluşan 16 ekibimizin sunumlarının gerçekleşeceği Demo Doy etkinliğine hepiniz davetlisiniz. Girişimci çalışma arkadaşını desteklemek için seni de bekliyoruz!`,
                 event_date: "06.03.2024",
@@ -116,6 +116,24 @@ export default function Etkinlikler({navigation}) {
         return differenceInDays;
     };
     
+    const [heartPressedMap, setHeartPressedMap] = useState({});
+    const [plusPressedMap, setPlusPressedMap] = useState({}); 
+
+    const handleHeartPress = (itemId) => {
+        // Burada kalp simgesine basıldığında yapılacak işlemleri tanımlayabilirsiniz.
+        // Örneğin bir istek gönderip yanıt aldığınızda setHeartPressed(true) yapabilirsiniz.
+        // Aşağıda benzer şekilde handlePlusPress için de bir işlev tanımlayabilirsiniz.
+        // Bu örnekte Alert kullanarak basit bir bildirim gösteriyorum.
+        Alert.alert(`Heart pressed: ${itemId}`);
+        setHeartPressedMap({ ...heartPressedMap, [itemId]: !heartPressedMap[itemId] }); // Yanıt gelirse true yapın
+    };
+
+    const handlePlusPress = (itemId) => {
+        // Burada artı simgesine basıldığında yapılacak işlemleri tanımlayabilirsiniz.
+        Alert.alert(`Plus pressed: ${itemId}`);
+        setPlusPressedMap({ ...plusPressedMap, [itemId]: !plusPressedMap[itemId] }); // Yanıt gelirse true yapın
+
+    };
 
 
     
@@ -236,27 +254,41 @@ export default function Etkinlikler({navigation}) {
 
                     <FlatList
                     data={searchResults.length === 0 ? dataForEtkinlik.Etkinlik : searchResults}
-                    style={{ flex: 1, width: "90%", marginHorizontal: 20 }}
+                    style={{ flex: 1, width: "100%" }}
                     scrollEnabled={false}
                     renderItem={({ item }) => (
                         <View style={{ alignItems: 'center' }}>
-                            <View style={{ alignItems: 'center', width: '90%' }}>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18, width: '110%' }}>
-                                    {item.event_name}
+                            <Text style={{ height: 0, backgroundColor: 'black', width: '100%', marginVertical: 30 }} />
+
+                            <View style={{ width: '100%', paddingHorizontal: 20 }}>
+                                    <TouchableOpacity onPress={() => { setModalVisible(true); setSelectedItem(item) }} >
+                                        <View style={{ height: 300, alignItems: 'center', borderRadius: 10, backgroundColor: '#b9b9b9' }}>
+                                            <Image
+                                                style={{ height: 300, width: '100%', borderRadius: 10 }}
+                                                source={item.imageUri}
+                                            />
+                                            <View style={{ position: 'absolute', top: 10, right: 10, flexDirection: 'row' }}>
+                                                <TouchableOpacity onPress={() => handleHeartPress(item.id)}>
+                                                    <Ionicons name="heart" size={30} color={heartPressedMap[item.id] ? 'green' : 'red'} style={{ marginRight: 10, textShadowRadius: 6, textShadowColor: 'white' }} />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => handlePlusPress(item.id)}>
+                                                    <Ionicons name="add-circle" size={30} color={plusPressedMap[item.id] ? 'green' : 'red'} style={{ textShadowRadius: 5, textShadowColor: 'white' }} />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+
+                                <Text style={{ fontWeight: 'bold', fontSize: 15, textAlign: 'left', marginVertical: 10 }}>
+                                    {item.event_name}{'\n'}
                                     {getDaysUntilEvent(item.event_date) > 0 ? (
-                                        <Text style={{ color: 'green' }}> - {getDaysUntilEvent(item.event_date)} gün sonra</Text>
+                                        <Text style={{ color: 'rgb(189, 189, 189)', textAlign: 'left' }}>{getDaysUntilEvent(item.event_date)} gün sonra</Text>
                                     ) : (
-                                        <Text style={{ color: 'red' }}> - {Math.abs(getDaysUntilEvent(item.event_date))} gün önce</Text>
+                                        <Text style={{ color: 'rgb(189, 189, 189)', textAlign: 'left' }}>{Math.abs(getDaysUntilEvent(item.event_date))} gün önce</Text>
                                     )}
                                 </Text>
                             </View>
-                            <TouchableOpacity onPress={() => { setModalVisible(true); setSelectedItem(item) }}>
-                                <Image
-                                    style={{ height: 500, resizeMode: 'contain', aspectRatio: 1 }}
-                                    source={item.imageUri}
-                                />
-                            </TouchableOpacity>
                         </View>
+
 
                     )}
                     keyExtractor={item => item.id.toString()}

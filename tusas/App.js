@@ -22,6 +22,7 @@ import { useNavigation } from '@react-navigation/native';
 import Contact from './pages/Contacts';
 import Bildirim from './pages/Bildirimler';
 import Setting from './pages/Settings';
+import Takvim from './pages/Takvim';
 import Constants from 'expo-constants';
 
 
@@ -42,13 +43,15 @@ function HomeStack({navigation}){
                     } else if (route.name === 'Podcastler') {
                         iconName = "mic-circle-outline" ;
                     }else if (route.name === 'Etkinlikler') {
-                        iconName = "planet-outline" ;
+                        iconName = "flash-outline" ;
                     }else if (route.name === 'Program') {
-                        iconName = "planet-outline" ;
+                        iconName = "ellipse" ;
                     }else if (route.name === 'Bulten') {
                         iconName = "newspaper-outline" ;
                     }else if (route.name === 'Videolar') {
                         iconName = "videocam-outline" ;
+                    }else if (route.name === 'Takvim') {
+                        iconName = "calendar-outline" ;
                     }
                     return <Ionicons name={iconName} size={size} color={color} />;
 
@@ -96,7 +99,17 @@ function HomeStack({navigation}){
                                         <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
                                     </TouchableOpacity>),
                 headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
-                ) }} />  
+                ) }} /> 
+            <Tab.Screen name="Takvim" component={Takvim} options={{
+                headerStyle: { height: 120},
+                headerTitleAlign: 'center',
+                headerTitleStyle:{fontSize:25, fontWeight:'700'},
+                headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
+                                        <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
+                                    </TouchableOpacity>),
+                headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
+                ) }} /> 
+                 
             <Tab.Screen name="Videolar" component={Videolar} options={{
                 headerStyle: { height: 120},
                 headerTitleAlign: 'center',

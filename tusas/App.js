@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Homepage from './pages/Homepage';
 import Etkinlikler from './pages/Etkinlikler';
+import Program from './pages/Program';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Podcastler from './pages/Podcastler';
 import Bulten from './pages/Bulten';
@@ -18,6 +19,10 @@ import { FontAwesome } from '@expo/vector-icons';
 import Profile from './pages/Profile';
 import { Avatar } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import Contact from './pages/Contacts';
+import Bildirim from './pages/Bildirimler';
+import Setting from './pages/Settings';
+import Constants from 'expo-constants';
 
 
 const Tab = createBottomTabNavigator();
@@ -28,31 +33,42 @@ function HomeStack({navigation}){
     return (
         <Tab.Navigator 
             screenOptions={({ route }) => ({
-            tabBarIcon: ({ color, size }) => {
-                let iconName;
+                tabBarIcon: ({ color, size }) => {
+                    let iconName;
 
-                if (route.name === 'Anasayfa') {
-                    iconName = "home" ;
-                    size *= 1.2;
-                } else if (route.name === 'Podcastler') {
-                    iconName = "mic-circle-outline" ;
-                }else if (route.name === 'Etkinlikler') {
-                    iconName = "planet-outline" ;
-                }else if (route.name === 'Bulten') {
-                    iconName = "newspaper-outline" ;
-                }else if (route.name === 'Videolar') {
-                    iconName = "videocam-outline" ;
-                }
-                return <Ionicons name={iconName} size={size} color={color} />;
+                    if (route.name === 'Anasayfa') {
+                        iconName = "home" ;
+                        size *= 1.2;
+                    } else if (route.name === 'Podcastler') {
+                        iconName = "mic-circle-outline" ;
+                    }else if (route.name === 'Etkinlikler') {
+                        iconName = "planet-outline" ;
+                    }else if (route.name === 'Program') {
+                        iconName = "planet-outline" ;
+                    }else if (route.name === 'Bulten') {
+                        iconName = "newspaper-outline" ;
+                    }else if (route.name === 'Videolar') {
+                        iconName = "videocam-outline" ;
+                    }
+                    return <Ionicons name={iconName} size={size} color={color} />;
 
-            },
-            tabBarActiveTintColor: 'rgba(237, 52, 53, 0.9)',
-            tabBarInactiveTintColor: 'rgba(41, 64, 153, 0.5)',
-            })}
+                },
+                tabBarActiveTintColor: 'rgba(237, 52, 53, 0.9)',
+                tabBarInactiveTintColor: 'rgba(41, 64, 153, 0.5)',
+                })}
             initialRouteName="Anasayfa"
 
             >
-              
+            <Tab.Screen name="Program" component={Program} options={{
+
+                headerStyle: { height: 120},
+                headerTitleAlign: 'center',
+                headerTitleStyle:{fontSize:25, fontWeight:'700'},
+                headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
+                                        <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
+                                    </TouchableOpacity>),
+                headerLeft: () => (<Image source={require('./assets/header_logo.png')} style={{marginLeft:10, height:40, width:100}}/>
+            ) }} />   
             <Tab.Screen name="Etkinlikler" component={Etkinlikler} options={{
                 headerStyle: { height: 120},
                 headerTitleAlign: 'center',
@@ -102,6 +118,58 @@ function HomeStack({navigation}){
         </Tab.Navigator>
       );
 }
+function ContactStack({navigation}){
+    return ( 
+        <Stack.Navigator >
+            <Stack.Screen name='Kisiler' component={Contact} options={{headerStyle: { height: 120},
+                                    headerTitleAlign: 'center',
+                                    headerTitleStyle:{fontSize:25, fontWeight:'700'},
+                                    headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
+                                                            <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
+                                                        </TouchableOpacity>),
+                                    headerLeft: () => (<TouchableOpacity  style={{padding: 5, left:'5%',flexDirection:'row', justifyContent:'flex-end', alignItems:'center', }} onPress={() => navigation.navigate("Ana sayfa")}>
+                                                            <Ionicons name="chevron-back" color="black" style={{fontSize:30}} />
+                                                            <Text style={{color:'black',fontWeight:'500',fontSize:15}}>{"Anasayfa"}</Text>
+                                                        </TouchableOpacity>
+                                    )}}/>
+        </Stack.Navigator>
+    )
+}
+
+function BildirimlerStack({navigation}){
+    return ( 
+        <Stack.Navigator >
+            <Stack.Screen name='Bildirimler' component={Bildirim} options={{headerStyle: { height: 120},
+                                    headerTitleAlign: 'center',
+                                    headerTitleStyle:{fontSize:25, fontWeight:'700'},
+                                    headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
+                                                            <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
+                                                        </TouchableOpacity>),
+                                    headerLeft: () => (<TouchableOpacity  style={{padding: 5, left:'5%',flexDirection:'row', justifyContent:'flex-end', alignItems:'center', }} onPress={() => navigation.navigate("Ana sayfa")}>
+                                                            <Ionicons name="chevron-back" color="black" style={{fontSize:30}} />
+                                                            <Text style={{color:'black',fontWeight:'500',fontSize:15}}>{"Anasayfa"}</Text>
+                                                        </TouchableOpacity>
+                                    )}}/>
+        </Stack.Navigator>
+    )
+}
+function SettingStack({navigation}){
+    return ( 
+        <Stack.Navigator>
+            <Stack.Screen name='Ayarlar' component={Setting} options={{headerStyle: { height: 120},
+                                    headerTitleAlign: 'center',
+                                    headerTitleStyle:{fontSize:25, fontWeight:'700'},
+                                    headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
+                                                            <FontAwesome name="bars" size={24} color="rgb(41, 64, 153)" style={{paddingRight:30}}/>
+                                                        </TouchableOpacity>),
+                                    headerLeft: () => (<TouchableOpacity  style={{padding: 5, left:'5%',flexDirection:'row', justifyContent:'flex-end', alignItems:'center', }} onPress={() => navigation.navigate("Ana sayfa")}>
+                                                            <Ionicons name="chevron-back" color="black" style={{fontSize:30}} />
+                                                            <Text style={{color:'black',fontWeight:'500',fontSize:15}}>{"Anasayfa"}</Text>
+                                                        </TouchableOpacity>
+                                    )}}/>
+        </Stack.Navigator>
+    )
+}
 
 function Main({navigation}){
     return(
@@ -128,11 +196,7 @@ function Main({navigation}){
                                     <Text style={{color:'white',width:'200%',fontSize:18, paddingTop:20}}>Fevzi KILAS</Text>
                                 </View>
                                     
-                                ),
-                                
-                                }}
-                                
-                                />
+                                )}}/>
 
             <Drawer.Screen name="Ana sayfa" component={HomeStack}  
                         options={{ 
@@ -155,19 +219,14 @@ function Main({navigation}){
                                         name="home"
                                         size={size}
                                         color={focused ? 'white' : 'lightgrey'}
-                                        
-                                        
                                     />
                                     <Text style={{color:'white'}}>{"   "}Ana Sayfa</Text>
                                 </View>
-                                ),
-                            
-                                
-                                }}/>
-                                
-            <Drawer.Screen name="Kontaktlar" component={HomeStack}  
+                                )}}/>
+
+            <Drawer.Screen name="Contact" component={ContactStack}  
                         options={{ 
-                            headerShown:false,
+                            headerShown: false,
                             drawerPosition:'right',
                             drawerStyle: {
                                 width: '60%', 
@@ -186,16 +245,12 @@ function Main({navigation}){
                                         name="person"
                                         size={size}
                                         color={focused ? 'white' : 'lightgrey'}
-                                        
-                                        
                                     />
                                     <Text style={{color:'white'}}>{"   "}Kişiler</Text>
                                 </View>
-                                ),
+                                )}}/>
                             
-                                
-                                }}/>
-            <Drawer.Screen name="Bildirimler" component={HomeStack}  
+            <Drawer.Screen name="Bildirim" component={BildirimlerStack}  
                         options={{ 
                             headerShown:false,
                             drawerPosition:'right',
@@ -215,18 +270,13 @@ function Main({navigation}){
                                     <Ionicons 
                                         name="notifications"
                                         size={size}
-                                        color={focused ? 'white' : 'lightgrey'}
-                                        
-                                        
+                                        color={focused ? 'white' : 'lightgrey'}   
                                     />
                                     <Text style={{color:'white'}}>{"   "}Bildirimler</Text>
                                 </View>
-                                ),
-                            
-                                
-                                }}/>
-            
-            <Drawer.Screen name="Settings" component={HomeStack}  
+                                )}}/>
+
+            <Drawer.Screen name="Settings" component={SettingStack}  
                         options={{ 
                             headerShown:false,
                             drawerPosition:'right',
@@ -247,15 +297,10 @@ function Main({navigation}){
                                         name="settings"
                                         size={size}
                                         color={focused ? 'white' : 'lightgrey'}
-                                        
-                                        
                                     />
-                                    <Text style={{color:'white'}}>{"   "}Settings</Text>
+                                    <Text style={{color:'white'}}>{"   "}Ayarlar</Text>
                                 </View>
-                                ),
-                            
-                                
-                                }}/>
+                                )}}/>
             
         </Drawer.Navigator>  
     );
@@ -267,7 +312,7 @@ export default function App() {
             <Stack.Navigator initialRouteName="Home">
                     {isSignedIn ? (
                 <>
-                    <Stack.Screen name="Home" component={Main} options={{headerShown: false}} />                    
+                    <Stack.Screen name="Home" component={Main} options={{headerShown: false}} />
                 </>
                 ) : (
                 <>

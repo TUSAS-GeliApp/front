@@ -21,7 +21,7 @@ export default function Etkinlikler({navigation}) {
                 event_content: "Teknoloji ve İnovosyon Topluluğu tarafından çevrimiçi olarak düzenlenen Fütüristler Derneği Yüksek İstişare Kurulu üyesi "+
                                  "Dr. Mustafa Aykut ile Gelecekler Günü söyleşisine davetlisiniz. Etkinliğe katılarak ilham olabilir ve alternatif gelecekleri "+
                                   "keşfetme fırsatını yakalayabilirsiniz.", 
-                event_date: "25.04.2024",
+                event_date: "25.06.2024",
                 imageUri: require("../assets/etkinlikler/soylesi.jpg"),
                 konum: {latitude: 39.91130050705124, longitude: 32.81831313407547},
                 link: "",
@@ -41,8 +41,8 @@ export default function Etkinlikler({navigation}) {
                 id: 3, 
                 event_name: "Demo Day", 
                 event_content: `HANGAR Kurum içi Girişimcilik Pilot Programımız kapsamında gerçekleşecek Demo Day etkinliği 6 Mart Çarşambagünü düzenlenecektir. 3 ay boyunca Hızlandırma Programı kapsamında iş fikirleri üzerinde çalışan kurum içi girişimcilerden oluşan 16 ekibimizin sunumlarının gerçekleşeceği Demo Doy etkinliğine hepiniz davetlisiniz. Girişimci çalışma arkadaşını desteklemek için seni de bekliyoruz!`,
-                event_date: "25.04.2024",
-                imageUri: require("../assets/etkinlikler/soylesi2.jpg"),
+                event_date: "06.03.2024",
+                imageUri: require("../assets/etkinlikler/demodaydavet.jpg"),
                 konum: {latitude: 40.08245625122704, longitude: 32.586099681975234},
                 link: "",
                 is_online: false,
@@ -63,10 +63,11 @@ export default function Etkinlikler({navigation}) {
     const handleSearch = (query) => {
         setSearchQuery(query);
         const results = dataForEtkinlik.Etkinlik.filter(item => {
-            return item.title.toLowerCase().includes(query.toLowerCase());
+            return item.event_name.toLowerCase().includes(query.toLowerCase());
         });
         setSearchResults(results);
     };
+    
     const handleLinkPress = (link) => {
         if (link === "") {
             Linking.openURL("https://www.tusas.com/iletisim");
@@ -102,6 +103,20 @@ export default function Etkinlikler({navigation}) {
             return <Text>{content.event_content}</Text>;
         }
     };
+    const getDaysUntilEvent = (eventDate) => {
+        const today = new Date();
+        const parts = eventDate.split('.');
+        const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        const event = new Date(formattedDate);
+    
+        today.setHours(0, 0, 0, 0);
+        const differenceInTime = event.getTime() - today.getTime();
+        const differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+        
+        return differenceInDays;
+    };
+    
+
 
     
       
@@ -151,7 +166,7 @@ export default function Etkinlikler({navigation}) {
                                                     <Text>{selectedItem.latitude}</Text>
                                                     {!selectedItem.is_online ? (
                                                         <View>
-
+                                                            {/* To run this without expo check https://docs.expo.dev/versions/latest/sdk/map-view/ */}
                                                                 <MapView
                                                                     style={{width: "100%", height:"100%"}}
                                                                     initialRegion={{
@@ -164,6 +179,7 @@ export default function Etkinlikler({navigation}) {
                                                                     <Marker
                                                                         title={selectedItem.event_name}
                                                                         coordinate={{ latitude: selectedItem.konum.latitude, longitude: selectedItem.konum.longitude }}
+                                                                        calloutVisible={true} 
                                                                     />
                                                                 </MapView>
                                                             <Modal visible={mapModalVisible}>
@@ -176,19 +192,27 @@ export default function Etkinlikler({navigation}) {
                                                                         longitudeDelta: 0.01,
                                                                     }}
                                                                     >
-                                                                    
-                                                                    <TouchableOpacity onPress={() => setMapModalVisible(!mapModalVisible)} >
-                                                                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 55, paddingLeft: 20 }}>
-                                                                            <Ionicons name="chevron-back-sharp" color="black" style={{ fontSize:30 }} />
-                                                                            <Text style={{ color: 'black', fontWeight: 'bold', fontSize: 25 }}>{"Back"}</Text>
+                                                                    <Marker
+                                                                    title={selectedItem.event_name}
+                                                                    coordinate={{ latitude: selectedItem.konum.latitude, longitude: selectedItem.konum.longitude }}
+                                                                    />
+                                                                  </MapView>  
+                                                                    <TouchableOpacity 
+                                                                        onPress={() => setMapModalVisible(!mapModalVisible)} 
+                                                                        style={{ 
+                                                                            position: 'absolute', 
+                                                                            top: Platform.OS === 'ios' ? 50 : 20, // Platforma göre stil belirleme
+                                                                            left: Platform.OS === 'ios' ? 10 : 5,
+                                                                        }}
+                                                                    >
+                                                                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                                            <Ionicons name="chevron-back-sharp" color={Platform.OS === 'ios' ? 'white' : 'black'} style={{ fontSize: 40, shadowOpacity:1  }} />
+                                                                            <Text style={{ color: Platform.OS === 'ios' ? 'white' : 'black', fontWeight: 'bold', fontSize: 25, shadowOpacity:1  }}>{"Back"}</Text>
                                                                         </View>
                                                                     </TouchableOpacity>
 
-                                                                    <Marker
-                                                                        title={selectedItem.event_name}
-                                                                        coordinate={{ latitude: selectedItem.konum.latitude, longitude: selectedItem.konum.longitude }}
-                                                                    />
-                                                                </MapView>
+                                                                    
+                                                                
                                                             </Modal>
                                                             
                                                         </View>
@@ -211,28 +235,33 @@ export default function Etkinlikler({navigation}) {
 
 
                     <FlatList
-                        data={searchResults.length === 0 ? dataForEtkinlik.Etkinlik : searchResults}
-                        style={{ flex: 1, width: "90%", marginHorizontal: 20 }}
-                        scrollEnabled={false}
-                        renderItem={({ item }) => (
+                    data={searchResults.length === 0 ? dataForEtkinlik.Etkinlik : searchResults}
+                    style={{ flex: 1, width: "90%", marginHorizontal: 20 }}
+                    scrollEnabled={false}
+                    renderItem={({ item }) => (
                         <View style={{ alignItems: 'center' }}>
-                            <View style={{ alignItems: 'flex-start', width: '90%' }}>  
-                                <Text style={{ fontWeight: 'bold', fontSize: 18,width: '110%' }}>
+                            <View style={{ alignItems: 'center', width: '90%' }}>
+                                <Text style={{ fontWeight: 'bold', fontSize: 18, width: '110%' }}>
                                     {item.event_name}
+                                    {getDaysUntilEvent(item.event_date) > 0 ? (
+                                        <Text style={{ color: 'green' }}> - {getDaysUntilEvent(item.event_date)} gün sonra</Text>
+                                    ) : (
+                                        <Text style={{ color: 'red' }}> - {Math.abs(getDaysUntilEvent(item.event_date))} gün önce</Text>
+                                    )}
                                 </Text>
-                            </View>                                                     
+                            </View>
                             <TouchableOpacity onPress={() => { setModalVisible(true); setSelectedItem(item) }}>
                                 <Image
-                                    style={{ height: 500, resizeMode: 'contain', aspectRatio: 1 }} 
+                                    style={{ height: 500, resizeMode: 'contain', aspectRatio: 1 }}
                                     source={item.imageUri}
                                 />
                             </TouchableOpacity>
                         </View>
-                        
-                        )}
-                        keyExtractor={item => item.id.toString()}
-                        />
 
+                    )}
+                    keyExtractor={item => item.id.toString()}
+                />
+               
                     
                 </ScrollView>
             </View>   

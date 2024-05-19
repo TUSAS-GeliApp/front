@@ -111,19 +111,27 @@ export default function Podcastler({navigation}) {
 
                     <FlatList
                         data={searchResults.length === 0 ? dataForPodcast.podcast : searchResults}
-                        style={{ flex: 1, width: "100%", marginHorizontal: 20 }} // marginVertical ve height değerlerini kaldırdık
+                        style={{ flex: 1, width: "100%"}} 
                         scrollEnabled={false}
                         renderItem={({ item }) => (
-                            <View style={{ marginVertical: 20 }}>                                                         
-                                <TouchableOpacity onPress={() => {setModalVisible(true), setSelectedItem(item)}} >
-                                    <Image
-                                        style={{ width: '90%', height: 200 }} 
-                                        source={item.Image}
-                                    />
-                                </TouchableOpacity>
-                                <Text style={{width: '90%', marginVertical:10,fontWeight:'bold'}}>
-                                    {item.title}
-                                </Text>
+                            <View style={{ alignItems: 'center' }}>
+                                <View style={{ width: '100%', paddingHorizontal: 20 }}>
+                                    <TouchableOpacity onPress={() => {setModalVisible(true), setSelectedItem(item)}} >
+                                        <View style={{ height: 200, alignItems: 'center', borderRadius: 10, backgroundColor: '#b9b9b9' }}>
+                                            <Image
+                                                style={{ height: 200, width: '100%', borderRadius: 10}} 
+                                                source={item.Image}
+                                            />
+                                            <Text style={{fontWeight: 'bold', fontSize: 25, textAlign: 'center', marginTop: -130, color:'white', textShadowOffset:0.6, textShadowColor:'black', textShadowRadius:5}}>
+                                                {item.title}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    
+                                    <Text style={{color: 'rgb(140, 140, 140)', textAlign: 'left' , marginStart: 15,  marginBottom: 15, marginTop: 5}}>
+                                        {item.artist_name}
+                                    </Text>
+                                </View>
                             </View>
                         )}
                         keyExtractor={item => item.id.toString()}

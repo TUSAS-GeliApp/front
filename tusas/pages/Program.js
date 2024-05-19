@@ -1,14 +1,23 @@
 import React, { useState } from "react";
-import { Image, Linking, Modal, ScrollView, Text, TouchableOpacity, View, Platform } from "react-native";
+import { Image, Linking, Modal, ScrollView, Text, TouchableOpacity, View, Platform, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
+import { Searchbar } from 'react-native-paper';
 
 export default function Program({ navigation }) {
     const [mapModalVisible, setMapModalVisible] = useState(false);
+    const [katilimciModalVisible, setKatilimciModalVisible] = useState(false);
+
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isContactDetailsVisible, setIsContactDetailsVisible] = useState({});
+  
+
 
     const dataForProgram = {
         Program: [
-            {
+            {   
+                id: 1,
                 event_name: "Take off 2024",
                 event_date: "Aralık 2024",
                 imageUri: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/MX8gyea7KQpyZt6X18B7SFf5WAdFMRtO.jpg",
@@ -30,12 +39,12 @@ export default function Program({ navigation }) {
                                 /BAŞVUR/
                                 info@takeoffistanbul.com
                                 `,
-                konusmacilar: [{name:'Selçuk Bayraktar', info:'TEKNOFEST Yönetim Kurulu Başkanı & T3 Vakfı Mütevelli Heyeti Başkanı', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/q4ovXBdrKmevSvv7kNmsf2CLjTYT6pny.jpg"},
-                                {name:'Mehmet Fatih Kacır', info:'T.C. Sanayi ve Teknoloji Bakanı & TEKNOFEST İcra Kurulu Başkanı', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/7XHGeNcSzyqHoLI1q97vf94nPE4Jlnyh.jpg"},
-                                {name:'Prof. Dr. Hakan Karakaş', info:'Vice President, Republic of Türkiye of Presidency of Defence Industries', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/oSoVX581JRORcaTlEFUjqPsKiCOmgDZW.png"},
-                                {name:'Sheikh Mansoor Bin Khalifa Al-Thani', info:'Chairman of MBK Holding', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/86VtkHC4QIRGWTrq9eklCW0wezjITrMh.png"},
-                                {name:'Prof. Dr. Mirco Kovac', info:'Founder and Director, Laboratory of Sustainability Robotics - EMPA', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/mg2KJ4lDxTeo1QY2b0I5Wb9k8I2ilfvS.jpg"},
-                                {name:'Jean-Yves Le Gall', info:'Former President, International Astronomical Federation', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/Rj8FfZCczbQPvfPgq4JBpyA2wb5DoFMl.jpg"},
+                konusmacilar: [{id: 1, name:'Selçuk Bayraktar', info:'TEKNOFEST Yönetim Kurulu Başkanı & T3 Vakfı Mütevelli Heyeti Başkanı', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/q4ovXBdrKmevSvv7kNmsf2CLjTYT6pny.jpg"},
+                                {id: 2, name:'Mehmet Fatih Kacır', info:'T.C. Sanayi ve Teknoloji Bakanı & TEKNOFEST İcra Kurulu Başkanı', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/7XHGeNcSzyqHoLI1q97vf94nPE4Jlnyh.jpg"},
+                                {id: 3, name:'Prof. Dr. Hakan Karakaş', info:'Vice President, Republic of Türkiye of Presidency of Defence Industries', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/oSoVX581JRORcaTlEFUjqPsKiCOmgDZW.png"},
+                                {id: 4, name:'Sheikh Mansoor Bin Khalifa Al-Thani', info:'Chairman of MBK Holding', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/86VtkHC4QIRGWTrq9eklCW0wezjITrMh.png"},
+                                {id: 5, name:'Prof. Dr. Mirco Kovac', info:'Founder and Director, Laboratory of Sustainability Robotics - EMPA', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/mg2KJ4lDxTeo1QY2b0I5Wb9k8I2ilfvS.jpg"},
+                                {id: 6, name:'Jean-Yves Le Gall', info:'Former President, International Astronomical Federation', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/Rj8FfZCczbQPvfPgq4JBpyA2wb5DoFMl.jpg"},
                             ],
                 sss: `
                     Sizinle nasıl iletişime geçebilirim?
@@ -68,9 +77,46 @@ export default function Program({ navigation }) {
                     Bir ekip sadece bir girişim ile başvuru yapabilir.
                     İki farklı girişim ekibinde yer alarak yarışmaya başvuru yapabilir miyim?
                     Bir kişi sadece bir girişim üzerinden başvuru yapabilir.
-                `
+                `,
+                katilimcilar:  [{ id: 1, name: 'Selçuk Bayraktar', info: 'TEKNOFEST Yönetim Kurulu Başkanı & T3 Vakfı Mütevelli Heyeti Başkanı', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/q4ovXBdrKmevSvv7kNmsf2CLjTYT6pny.jpg" },
+                                { id: 2, name: 'Mehmet Fatih Kacır', info: 'T.C. Sanayi ve Teknoloji Bakanı & TEKNOFEST İcra Kurulu Başkanı', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/7XHGeNcSzyqHoLI1q97vf94nPE4Jlnyh.jpg" },
+                                { id: 3, name: 'Hakan Karakaş', info: 'Vice President, Republic of Türkiye of Presidency of Defence Industries', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/oSoVX581JRORcaTlEFUjqPsKiCOmgDZW.png" },
+                                { id: 4, name: 'Sheikh Mansoor Bin Khalifa Al-Thani', info: 'Chairman of MBK Holding', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/86VtkHC4QIRGWTrq9eklCW0wezjITrMh.png" },
+                                { id: 5, name: 'Mirco Kovac', info: 'Founder and Director, Laboratory of Sustainability Robotics - EMPA', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/mg2KJ4lDxTeo1QY2b0I5Wb9k8I2ilfvS.jpg" },
+                                { id: 6, name: 'Jean-Yves Le Gall', info: 'Former President, International Astronomical Federation', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/Rj8FfZCczbQPvfPgq4JBpyA2wb5DoFMl.jpg" },
+                                { id: 7, name: 'John Doe', info: 'CEO of Tech Innovators', pp_link: "" },
+                                { id: 8, name: 'Jane Smith', info: 'CTO of Future Solutions', pp_link: "" },
+                                { id: 9, name: 'Albert Johnson', info: 'Lead Engineer at AI Labs', pp_link: "" },
+                                { id: 10, name: 'Emily Davis', info: 'Head of Marketing at Creative Ventures', pp_link: "" },
+                                { id: 11, name: 'Michael Brown', info: 'Senior Data Scientist at Big Data Inc.', pp_link: "" },
+                                { id: 12, name: 'Sarah Wilson', info: 'Product Manager at Tech Solutions', pp_link: "" },
+                                { id: 13, name: 'David Clark', info: 'Founder & CEO of Startup Hub', pp_link: "" },
+                                { id: 14, name: 'Laura Martinez', info: 'Research Scientist at BioTech Labs', pp_link: "" },
+                                { id: 15, name: 'James Anderson', info: 'Chief Financial Officer at FinTech Corp', pp_link: "" },
+                                { id: 16, name: 'Alice Thompson', info: 'Lead Designer at Creative Studios', pp_link: "" },
+                                { id: 17, name: 'Robert Lee', info: 'AI Specialist at Tech Minds', pp_link: "" },
+                                { id: 18, name: 'Olivia Garcia', info: 'Director of Engineering at Innovative Solutions', pp_link: "" },
+                                { id: 19, name: 'William Martinez', info: 'Head of R&D at Bio Innovations', pp_link: "" },
+                                { id: 20, name: 'Sophia Robinson', info: 'Marketing Director at Global Ventures', pp_link: "" },
+                                { id: 21, name: 'Liam Clark', info: 'Founder of Startup Incubator', pp_link: "" },
+                                { id: 22, name: 'Emma Lewis', info: 'Senior Developer at Code Masters', pp_link: "" },
+                                { id: 23, name: 'Noah Walker', info: 'Product Designer at Creative Labs', pp_link: "" },
+                                { id: 24, name: 'Ava Hall', info: 'CTO at Innovative Tech', pp_link: "" },
+                                { id: 25, name: 'Mason Allen', info: 'CEO at Tech Pioneers', pp_link: "" },
+                                { id: 26, name: 'Isabella Young', info: 'Lead Scientist at Bio Research', pp_link: "" },
+                                { id: 27, name: 'Lucas King', info: 'Head of Development at NextGen Solutions', pp_link: "" },
+                                { id: 28, name: 'Mia Wright', info: 'Project Manager at Future Innovators', pp_link: "" },
+                                { id: 29, name: 'Ethan Scott', info: 'Data Analyst at Analytics Pro', pp_link: "" },
+                                { id: 30, name: 'Amelia Harris', info: 'UX Designer at DesignWorks', pp_link: "" },
+                                { id: 31, name: 'Henry Adams', info: 'Cybersecurity Expert at SecureTech', pp_link: "" },
+                                { id: 32, name: 'Charlotte Nelson', info: 'Innovation Manager at TechFront', pp_link: "" },
+                                { id: 33, name: 'Alexander Carter', info: 'Chief Scientist at Quantum Research', pp_link: "" },
+                                { id: 34, name: 'Grace Mitchell', info: 'AI Researcher at Smart Innovations', pp_link: "" },
+                                { id: 35, name: 'James Baker', info: 'CEO at Future Tech Labs', pp_link: "" }
+                            
+                            ],
             }
-        ]
+        ] 
     };
 
     const handleLinkPress = (link) => {
@@ -107,9 +153,31 @@ export default function Program({ navigation }) {
             </React.Fragment>
         );
     };
-    
-    
-    
+    const handleSearch = (query) => {
+        setSearchQuery(query);
+        const results = dataForProgram.Program[0].katilimcilar.filter(katilimci =>
+            katilimci.name.toLowerCase().includes(query.toLowerCase())
+        );
+        setSearchResults(results);
+    };
+
+    const Listofkatilimcilar = searchQuery ? searchResults : dataForProgram.Program[0].katilimcilar;
+
+    const getInitials = (name) => {
+        const initials = name.split(' ').map(word => word[0]).join('').slice(0, 2);
+        return initials;
+    };
+
+    const [isButtonGreenMap, setIsButtonGreenMap] = useState({});
+
+    const handleAddContact = (itemId) => {
+        setIsButtonGreenMap(prevMap => ({
+            ...prevMap,
+            [itemId]: !prevMap[itemId]
+        }));
+        // Add contact logic here
+    };
+
     return (
         <ScrollView style={{ flex: 1}}>
             {dataForProgram.Program.map((item) => (
@@ -175,7 +243,6 @@ export default function Program({ navigation }) {
                     <View style={{ alignItems: 'center', marginTop: 20 }}>
                         <Text style={{ padding: 20, marginTop: -50 }}>
                             {item.sss.split('\n').map((content, index) => {
-                                console.log(index)
                                 content = content.trim();
                                 if (content.trim().endsWith('?')) {
                                     return (
@@ -207,6 +274,7 @@ export default function Program({ navigation }) {
                         </TouchableOpacity>
                     </View>
 
+                    
                     {/* Harita */}
                     <Text style={{height:2, backgroundColor:'black', width:'100%', marginTop:30}}/>
                     <View style={{ width: "100%", height: 500 }}>
@@ -261,12 +329,103 @@ export default function Program({ navigation }) {
                             </View>
                         </Modal>
                     </View>
-
                     
+                    {/* Kayıt olanları gor  */}
+                    <View style={{ width: "100%", alignItems:'center'}}>
+                        <Text style={{height:2, backgroundColor:'black', width:'100%', marginBottom:20}}/>
+                        <TouchableOpacity onPress ={() => setKatilimciModalVisible(!katilimciModalVisible)} >
+
+                            <Text style={{fontSize:25, backgroundColor:'black', color: 'white', padding: 20, borderRadius: 10, marginTop: 20, marginBottom: 20, width: '80%', shadowOpacity:0.4, textShadowRadius:2, textShadowColor:'#rgb(237, 52, 53)' }}>
+                                Katılımcılar
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                    <Modal visible={katilimciModalVisible}>
+                        
+                            <View style={{ flex: 1, backgroundColor:'black' }}>
+                                
+                                
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', width:'100%',height: 50 }}>
+                                        <TouchableOpacity 
+                                        onPress={() => setKatilimciModalVisible(!katilimciModalVisible)} >
+                                            <View style={{top: Platform.OS === 'ios' ? 50 : 20, flexDirection:'row', justifyContent:'flex-start', padding:10}}>
+                                                <Ionicons name="chevron-back-sharp" color={Platform.OS === 'ios' ? 'white' : 'black'} style={{ fontSize: 30, marginLeft:10  }} />
+                                                <Text style={{ color:'white', fontWeight:'bold', fontSize:20}}>Back</Text>
+                                            </View>
+                                            
+                                        </TouchableOpacity>
+                                    </View>
+                                <Text style={{textAlign:'center',marginTop: 15, color:'white', fontWeight:'bold', fontSize:20}}>Katilimcilar</Text>
+                                <Searchbar
+                                        placeholder="Search"
+                                        onChangeText={handleSearch}
+                                        value={searchQuery}
+                                        style={{ margin: 20, backgroundColor: 'grey', fontFamily: "Times New Roman" }}
+                                    />
+                                    
+                                <View style={{alignItems:'center', paddingVertical:60, borderBottomColor:'white', borderWidth:0.3}}>
+                                    <Text style={{color:'white', fontSize:25}}>{item.katilimcilar.length} kisi katildi</Text>
+                                </View>
+                                
+                                
+                                <ScrollView style={{ height: '100%' }}>
+                                    {searchResults.length === 0 && searchQuery !== '' && (
+                                        <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight: 'bold', color: 'white' }}>
+                                        No results found
+                                        </Text>
+                                    )}
+                                    {(searchQuery === '' ? item.katilimcilar : searchResults).map((katilimci, index) => (
+                                        <View key={index}>
+                                        {/* Katilimci görüntüsü */}
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                            setIsContactDetailsVisible({ ...isContactDetailsVisible, [katilimci.id]: !isContactDetailsVisible[katilimci.id] });
+                                            }}
+                                            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10, borderRadius: 10, margin: 10}}
+                                        >
+                                            {katilimci.pp_link ? (
+                                            <Image
+                                                source={{ uri: katilimci.pp_link }}
+                                                style={{ width: 50, height: 50, borderRadius: 50 }}
+                                            />
+                                            ) : (
+                                            <View style={{ width: 50, height: 50, borderRadius: 50, backgroundColor: 'grey', justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
+                                                {getInitials(katilimci.name)}
+                                                </Text>
+                                            </View>
+                                            )}
+                                            <View style={{ marginLeft: 10, width: '70%' }}>
+                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'white' }}>{katilimci.name}</Text>
+                                                <Text style={{ fontSize: 10, color: 'white' }}>{katilimci.info}</Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => handleAddContact(katilimci.id)} >
+                                                <Ionicons name="add-circle" size={30} color={isButtonGreenMap[katilimci.id] ? 'green' : 'red'} style={{ textShadowRadius: 5, textShadowColor: 'white' }} />
+                                            </TouchableOpacity>
+                                        </TouchableOpacity>
+                                        {/* Detaylar */}
+                                        {isContactDetailsVisible[katilimci.id] && (
+                                            <View style={{ backgroundColor: 'lightgrey', padding: 10, margin: 10, borderRadius: 10 }}>
+                                            <Text>{katilimci.name}</Text>
+                                            <Text>{katilimci.name}</Text>
+                                            <Text>{katilimci.name}</Text>
+                                            </View>
+                                        )}
+                                        </View>
+                                    ))}
+                                    </ScrollView>
 
 
+                               
+
+
+
+
+
+                            </View>
+                            
+                    </Modal>
                 </View>
-            
             ))}
         </ScrollView>
     );

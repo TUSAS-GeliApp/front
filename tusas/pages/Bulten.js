@@ -1,8 +1,10 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, Button, Modal, TouchableWithoutFeedback, ScrollView, Text, TextInput, View, TouchableOpacity, Switch, Alert } from "react-native";
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 import { FlatList } from "react-native-gesture-handler";
+import { xxx } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Bulten({navigation}) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -12,15 +14,15 @@ export default function Bulten({navigation}) {
 
     const dataForBulten = {
         Bulten: [
-            { id: 1, author_name: "Alice Johnson", title: "Yeni Uzay Keşfi", content: "Bilim adamları, yeni bir gezegen keşfettiklerini açıkladı. Keşfedilen gezegen, Dünya'ya oldukça benzer özelliklere sahip ve yaşamın var olabileceği koşullara sahip olabilir. Araştırmacılar, bu keşfin uzay keşifleri için önemli bir adım olduğunu belirtiyor." },
-            { id: 2, author_name: "David Smith", title: "Yapay Zeka ve İnsanlık", content: "Yapay zeka teknolojisinin gelişimi, insanlık için yeni fırsatlar ve zorluklar ortaya çıkarıyor. Yapay zeka uzmanları, bu teknolojinin etik ve güvenlik konularını ele alarak, insanlığın geleceğini şekillendirecek kararlar almak üzerine çalışıyorlar." },
-            { id: 3, author_name: "Emma Wilson", title: "İklim Değişikliği ve Acil Eylem Çağrısı", content: "İklim bilimciler, dünya genelindeki hızlı iklim değişikliğiyle başa çıkmak için acil eylem çağrısında bulunuyorlar. Artan sıcaklık, deniz seviyesinde yükselme ve ekstrem hava olayları gibi etkiler, iklim değişikliğinin ciddiyetini vurguluyor." },
-            { id: 4, author_name: "Oliver Brown", title: "Yeni Teknoloji Trendleri", content: "Teknoloji dünyasında sürekli olarak yeni trendler ortaya çıkıyor. Yapay zeka, blockchain, nesnelerin interneti ve diğer birçok alan, gelecekteki teknoloji gelişmelerinin odak noktaları haline geliyor. Bu yeni teknoloji trendleri, iş dünyası ve tüketici yaşamı üzerinde önemli etkilere sahip olabilir." },
-            { id: 5, author_name: "Sophia Davis", title: "Dijital Dönüşüm ve İş Dünyası", content: "Dijital teknolojilerin iş dünyasındaki yükselişi, iş süreçlerini ve iş modellerini değiştiriyor. Yeni dijital araçlar ve platformlar, şirketlerin verimliliğini artırırken, rekabet ortamını da değiştiriyor. İşletmeler, bu dijital dönüşüm sürecine ayak uydurmak ve rekabet avantajı sağlamak için çaba harcıyorlar." },
-            { id: 6, author_name: "James Wilson", title: "Sağlıkta Teknoloji İnovasyonları", content: "Sağlık sektörü, teknoloji inovasyonları sayesinde büyük dönüşümler yaşıyor. Yapay zeka destekli teşhis sistemleri, telemedicine uygulamaları ve dijital sağlık kayıtları gibi yeni teknolojiler, hasta bakımını ve sağlık hizmetlerini iyileştirmek için kullanılıyor. Bu teknolojik yenilikler, sağlık endüstrisinin geleceğini şekillendiriyor." },
-            { id: 7, author_name: "Ella Martinez", title: "Eğitimde Dijital Dönüşüm", content: "Eğitim sektörü, dijital teknolojilerin kullanımıyla büyük bir dönüşüm yaşıyor. Eğitim materyallerinin dijitalleştirilmesi, uzaktan eğitim platformlarının geliştirilmesi ve interaktif öğrenme araçlarının kullanılması, öğrencilere daha etkili ve kişiselleştirilmiş bir öğrenme deneyimi sunmayı amaçlıyor. Bu dijital dönüşüm, geleceğin eğitimini şekillendiriyor." },
-            { id: 8, author_name: "Olivia Anderson", title: "Yeni Yüzyılda Sanat ve Kültür", content: "Sanat ve kültür, dijital çağın getirdiği yeniliklerle yeni bir dönüşüm yaşıyor. Sanatçılar ve kültür kurumları, dijital medyanın ve teknolojinin gücünü kullanarak eserlerini daha geniş bir kitleye ulaştırmayı hedefliyorlar. Sanat ve kültürün dijitalleşmesi, yeni yüzyılda sanatın ve kültürün nasıl algılandığını ve deneyimlendiğini değiştiriyor." },
-            { id: 9, author_name: "Daniel Brown", title: "Yeni Uygulama Lansmanı", content: "Bir grup girişimci, yeni bir mobil uygulamanın lansmanını duyurdu. Bu uygulama, kullanıcıların günlük yaşamlarını kolaylaştırmak ve eğlenceli bir deneyim sunmak için tasarlanmıştır. Uygulamanın beta sürümü, kullanıcıların geri bildirimlerini almak ve iyileştirmeler yapmak amacıyla yayınlandı." },
+             { id: 1, author_name: "Alice Johnson", title: "Yeni Uzay Keşfi", content: "Bilim adamları, yeni bir gezegen keşfettiklerini açıkladı. Keşfedilen gezegen, Dünya'ya oldukça benzer özelliklere sahip ve yaşamın var olabileceği koşullara sahip olabilir. Araştırmacılar, bu keşfin uzay keşifleri için önemli bir adım olduğunu belirtiyor." },
+             { id: 2, author_name: "David Smith", title: "Yapay Zeka ve İnsanlık", content: "Yapay zeka teknolojisinin gelişimi, insanlık için yeni fırsatlar ve zorluklar ortaya çıkarıyor. Yapay zeka uzmanları, bu teknolojinin etik ve güvenlik konularını ele alarak, insanlığın geleceğini şekillendirecek kararlar almak üzerine çalışıyorlar." },
+             { id: 3, author_name: "Emma Wilson", title: "İklim Değişikliği ve Acil Eylem Çağrısı", content: "İklim bilimciler, dünya genelindeki hızlı iklim değişikliğiyle başa çıkmak için acil eylem çağrısında bulunuyorlar. Artan sıcaklık, deniz seviyesinde yükselme ve ekstrem hava olayları gibi etkiler, iklim değişikliğinin ciddiyetini vurguluyor." },
+             { id: 4, author_name: "Oliver Brown", title: "Yeni Teknoloji Trendleri", content: "Teknoloji dünyasında sürekli olarak yeni trendler ortaya çıkıyor. Yapay zeka, blockchain, nesnelerin interneti ve diğer birçok alan, gelecekteki teknoloji gelişmelerinin odak noktaları haline geliyor. Bu yeni teknoloji trendleri, iş dünyası ve tüketici yaşamı üzerinde önemli etkilere sahip olabilir." },
+             { id: 5, author_name: "Sophia Davis", title: "Dijital Dönüşüm ve İş Dünyası", content: "Dijital teknolojilerin iş dünyasındaki yükselişi, iş süreçlerini ve iş modellerini değiştiriyor. Yeni dijital araçlar ve platformlar, şirketlerin verimliliğini artırırken, rekabet ortamını da değiştiriyor. İşletmeler, bu dijital dönüşüm sürecine ayak uydurmak ve rekabet avantajı sağlamak için çaba harcıyorlar." },
+             { id: 6, author_name: "James Wilson", title: "Sağlıkta Teknoloji İnovasyonları", content: "Sağlık sektörü, teknoloji inovasyonları sayesinde büyük dönüşümler yaşıyor. Yapay zeka destekli teşhis sistemleri, telemedicine uygulamaları ve dijital sağlık kayıtları gibi yeni teknolojiler, hasta bakımını ve sağlık hizmetlerini iyileştirmek için kullanılıyor. Bu teknolojik yenilikler, sağlık endüstrisinin geleceğini şekillendiriyor." },
+             { id: 7, author_name: "Ella Martinez", title: "Eğitimde Dijital Dönüşüm", content: "Eğitim sektörü, dijital teknolojilerin kullanımıyla büyük bir dönüşüm yaşıyor. Eğitim materyallerinin dijitalleştirilmesi, uzaktan eğitim platformlarının geliştirilmesi ve interaktif öğrenme araçlarının kullanılması, öğrencilere daha etkili ve kişiselleştirilmiş bir öğrenme deneyimi sunmayı amaçlıyor. Bu dijital dönüşüm, geleceğin eğitimini şekillendiriyor." },
+             { id: 8, author_name: "Olivia Anderson", title: "Yeni Yüzyılda Sanat ve Kültür", content: "Sanat ve kültür, dijital çağın getirdiği yeniliklerle yeni bir dönüşüm yaşıyor. Sanatçılar ve kültür kurumları, dijital medyanın ve teknolojinin gücünü kullanarak eserlerini daha geniş bir kitleye ulaştırmayı hedefliyorlar. Sanat ve kültürün dijitalleşmesi, yeni yüzyılda sanatın ve kültürün nasıl algılandığını ve deneyimlendiğini değiştiriyor." },
+             { id: 9, author_name: "Daniel Brown", title: "Yeni Uygulama Lansmanı", content: "Bir grup girişimci, yeni bir mobil uygulamanın lansmanını duyurdu. Bu uygulama, kullanıcıların günlük yaşamlarını kolaylaştırmak ve eğlenceli bir deneyim sunmak için tasarlanmıştır. Uygulamanın beta sürümü, kullanıcıların geri bildirimlerini almak ve iyileştirmeler yapmak amacıyla yayınlandı." },
             { id: 10, author_name: "Sophie Clark", title: "Yenilenebilir Enerji Projeleri", content: "Yenilenebilir enerji projeleri, dünya genelinde giderek artan bir ilgi görüyor. Rüzgar enerjisi, güneş enerjisi ve hidroelektrik gibi yenilenebilir kaynaklar, fosil yakıtlara olan bağımlılığı azaltmak ve iklim değişikliğiyle mücadele etmek için potansiyel bir çözüm olarak görülüyor. Yenilenebilir enerji teknolojileri, enerji sektöründe önemli değişikliklere yol açıyor." },
             { id: 11, author_name: "Emma White", title: "Blockchain Teknolojisi ve Finans", content: "Blockchain teknolojisi, finans sektöründe büyük bir etki yaratıyor. Bu dağıtılmış defter teknolojisi, güvenilir ve şeffaf finansal işlemlerin gerçekleştirilmesine olanak tanıyor. Bankalar, ödeme hizmetleri ve diğer finansal kurumlar, blockchain'in potansiyelinden yararlanarak hizmetlerini iyileştiriyor ve maliyetleri azaltıyor." },
             { id: 12, author_name: "Jack Smith", title: "Yapay Zeka ve Otomasyon", content: "Yapay zeka ve otomasyon teknolojileri, endüstriyel ve iş süreçlerinde büyük bir dönüşüm yaratıyor. Otomasyon sistemleri, tekrarlayan görevleri otomatikleştirerek iş verimliliğini artırıyor ve insan kaynaklarını daha stratejik görevlere yönlendiriyor. Yapay zeka, veri analizi, tahminleme ve karar alma süreçlerinde insanların yeteneklerini artırıyor." },
@@ -30,9 +32,34 @@ export default function Bulten({navigation}) {
         ]
     };
 
+    const [bultenData, setbultenData] = useState([]);
+
+    useEffect(() => {
+        const fetchbultens = async () => {
+            try {
+                const accessToken = await AsyncStorage.getItem('accesToken');
+                const response = await fetch(`http://${xxx}:8080/newsletter/all_newsletters`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+                const data = await response.json();
+                setbultenData(data);
+                console.log(data);
+            } catch (error) {
+                console.error('Error fetching bulten data:', error);
+            }
+        };
+
+        fetchbultens();
+    }, []);
+
+        
+
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const results = dataForBulten.Bulten.filter(item => {
+        const results = bultenData.filter(item => {
             return item.title.toLowerCase().includes(query.toLowerCase());
         });
         setSearchResults(results);
@@ -50,8 +77,8 @@ export default function Bulten({navigation}) {
                         style={{margin:20, backgroundColor:'#rgb(246, 246, 246)', fontFamily:"Times New Roman"}}
                     />
                     {searchResults.length === 0 && searchQuery !== '' && (
-                    <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight:'bold' }}>
-                        No results found
+                    <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight:'bold', color:'red' }}>
+                        Sonuç Bulunamadı
                     </Text>
 )}
                     <Modal
@@ -75,7 +102,11 @@ export default function Bulten({navigation}) {
                                         {selectedItem && (
                                             
                                                 <ScrollView style={{marginTop:50}}>
-                                                    <View onStartShouldSetResponder={() => true}>
+                                                    <View onStartShouldSetResponder={() => true} style={{width: '100%', height: '100%'}}>
+
+                                                        <Image 
+                                                            style={{ width: '100%', height: 200, marginBottom: 10 }}
+                                                            source={{uri: selectedItem.thumbnail_path}}/>
                                                         <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10 }}>{selectedItem.title}</Text>
                                                         <Text style={{ fontStyle: 'italic', marginBottom: 30 }}>{selectedItem.author_name}</Text>
                                                         <Text style={{}}>{selectedItem.content}</Text>
@@ -94,7 +125,7 @@ export default function Bulten({navigation}) {
                     </Modal>
 
                     <FlatList
-                        data={searchResults.length === 0 ? dataForBulten.Bulten : searchResults}
+                        data={searchResults.length === 0 ? bultenData : searchResults}
                         style={{ marginHorizontal: 20 }}
                         scrollEnabled={false}
                         renderItem={({ item }) => (
@@ -105,7 +136,7 @@ export default function Bulten({navigation}) {
                                 </View>
                             </TouchableOpacity>
                         )}
-                        keyExtractor={item => item.id.toString()}
+                        keyExtractor={item => item.newsletter_id.toString()}
                     />
                     
                 </ScrollView>

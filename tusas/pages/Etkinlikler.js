@@ -1,10 +1,15 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, Linking , Modal, TouchableWithoutFeedback, ScrollView, Text, Platform, View, TouchableOpacity, KeyboardAvoidingView, Alert } from "react-native";
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 import { FlatList } from "react-native-gesture-handler";
 import MapView,{Marker} from 'react-native-maps';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Content } from "antd/es/layout/layout";
+import moment from "moment";
+
+import { xxx } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Etkinlikler({navigation}) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -14,112 +19,25 @@ export default function Etkinlikler({navigation}) {
     const [mapModalVisible, setMapModalVisible] = useState(false);
     const [isContactDetailsVisible, setIsContactDetailsVisible] = useState({});
 
-
-    const dataForEtkinlik = {
-        Etkinlik: [
-            { 
-                id: 1, 
-                event_name: "Teknoloji ve inavasyon toplulugu Soylesi", 
-                event_content: "Teknoloji ve İnovosyon Topluluğu tarafından çevrimiçi olarak düzenlenen Fütüristler Derneği Yüksek İstişare Kurulu üyesi "+
-                                 "Dr. Mustafa Aykut ile Gelecekler Günü söyleşisine davetlisiniz. Etkinliğe katılarak ilham olabilir ve alternatif gelecekleri "+
-                                  "keşfetme fırsatını yakalayabilirsiniz.", 
-                event_date: "25.06.2024",
-                imageUri: require("../assets/etkinlikler/soylesi.jpg"),
-                konum: {latitude: 39.91130050705124, longitude: 32.81831313407547},
-                link: "",
-                is_online: true,
-                katilimcilar:[
-                    {id:1, name:'Ali Veli', info:'Software Engineer'}, 
-                    {id:2, name:'Ayşe Fatma', info:'Data Scientist'}, 
-                    {id:3, name:'Mehmet Can', info:'Project Manager'}, 
-                    {id:4, name:'Zeynep Duru', info:'UX Designer'}, 
-                    {id:5, name:'Emre Yılmaz', info:'DevOps Engineer'}, 
-                    {id:6, name:'Hakan Kaya', info:'Product Owner'},
-                    {id:7, name:'Selin Öztürk', info:'Frontend Developer'},
-                    {id:8, name:'Kaan Demir', info:'Backend Developer'},
-                    {id:9, name:'Ece Kılıç', info:'Mobile Developer'},
-                    {id:10, name:'Ahmet Öz', info:'Cloud Architect'}
-                ]
-            },
-            { 
-                id: 2, 
-                event_name: "inavasyon Soylesleri", 
-                event_content: `"Kurum içi girişimcilik" ve "inovasyon" konularında alanında uzman kişileri ağırlayarak bakış açımızı zenginleştirdiğimiz söyleşi serimiz devam ediyor! Ford Otosan Gölcük Ar-Ge Test Merkezi Lideri olarak öne çıkan Selçuk Çelikel, "Kurumsal Bir Firmada Girişimci Olmak" konulu söyleşisiyle nbizlerle birlikte olacak. 8 Şubat Perşembe günij saat 12.30'da gerçekleşecek olan "İnovasyon Söyleşileri"ne hepiniz davetlisiniz.`,
-                event_date: "25.04.2024",
-                imageUri: require("../assets/etkinlikler/soylesi2.jpg"),
-                konum: {latitude: 39.91130050705124, longitude: 32.81831313407547},
-                link: "",
-                is_online: false,
-                katilimcilar:[
-                    {id:11, name:'Mert Yıldırım', info:'Business Analyst'}, 
-                    {id:12, name:'Deniz Çelik', info:'Marketing Specialist'}, 
-                    {id:13, name:'Ebru Aydın', info:'Scrum Master'}, 
-                    {id:14, name:'Onur Kaplan', info:'Security Engineer'}, 
-                    {id:15, name:'Pelin Şahin', info:'Quality Assurance'}, 
-                    {id:16, name:'Kemal Arslan', info:'Systems Analyst'},
-                    {id:17, name:'Seda Demir', info:'Data Analyst'},
-                    {id:18, name:'Barış Akın', info:'Full Stack Developer'},
-                    {id:19, name:'Gizem Polat', info:'Technical Writer'},
-                    {id:20, name:'Tolga Koç', info:'Network Engineer'}
-                ]
-            },
-            { 
-                id: 1563, 
-                event_name: "Demo Day", 
-                event_content: `HANGAR Kurum içi Girişimcilik Pilot Programımız kapsamında gerçekleşecek Demo Day etkinliği 6 Mart Çarşambagünü düzenlenecektir. 3 ay boyunca Hızlandırma Programı kapsamında iş fikirleri üzerinde çalışan kurum içi girişimcilerden oluşan 16 ekibimizin sunumlarının gerçekleşeceği Demo Doy etkinliğine hepiniz davetlisiniz. Girişimci çalışma arkadaşını desteklemek için seni de bekliyoruz!`,
-                event_date: "06.03.2024",
-                imageUri: require("../assets/etkinlikler/demodaydavet.jpg"),
-                konum: {latitude: 40.08245625122704, longitude: 32.586099681975234},
-                link: "",
-                is_online: false,
-                katilimcilar:[
-                    {id:21, name:'Okan Yılmaz', info:'Entrepreneur'}, 
-                    {id:22, name:'Duygu Sarı', info:'Innovator'}, 
-                    {id:23, name:'Eren Özdemir', info:'Startup Founder'}, 
-                    {id:24, name:'Büşra Kuru', info:'Venture Capitalist'}, 
-                    {id:25, name:'Gökhan Güven', info:'Tech Evangelist'}, 
-                    {id:26, name:'Sinem Bulut', info:'Business Developer'},
-                    {id:27, name:'Serkan Eren', info:'Innovation Consultant'},
-                    {id:28, name:'Aslı Tan', info:'Growth Hacker'},
-                    {id:29, name:'Burak Şen', info:'Sales Manager'},
-                    {id:30, name:'Hande Keskin', info:'Operations Manager'}
-                ]
-            },
-            { 
-                id: 4, 
-                event_name: "Sinema Daveti", 
-                event_content: `Teknoloji ve İnovosyon Topluluğu tarafından düzenlenen girişimcı ve inovosyon temalı film gösterimine davetlisiniz. Gerçek bir hayat hikayesinden uyarlanan, girişimciliğe dair düşündürecekleri ile arkadaş sohbetlerimizi canlandıracak heyecanlı bir filme hazır olun! Sürpriz ikramlarımızla birlikte eğlenceli vakit geçirmek isteyen herkesi bekleriz! Kontenjanımız sınırlıdır.  Kayıt ve Bilgi: Abdulsamet EKŞİ abdulsamet.eksi@tai.com.tr`,
-                event_date: "21.02.2024",
-                imageUri: require("../assets/etkinlikler/sinemadavet.jpg"),
-                konum: {latitude: 40.08245625122704, longitude: 32.586099681975234},
-                link: "",
-                is_online: false,
-                katilimcilar:[
-                    {id:31, name:'Tuba Erkan', info:'Film Enthusiast'}, 
-                    {id:32, name:'Berkay Can', info:'Movie Critic'}, 
-                    {id:33, name:'Leyla Mutlu', info:'Cinematographer'}, 
-                    {id:34, name:'Cem Gündüz', info:'Director'}, 
-                    {id:35, name:'Ece Yalçın', info:'Screenwriter'}, 
-                    {id:36, name:'Tuncay Özkan', info:'Producer'},
-                    {id:37, name:'Bora Doğan', info:'Actor'},
-                    {id:38, name:'Funda Şimşek', info:'Casting Director'},
-                    {id:39, name:'Nazan Çetin', info:'Film Editor'},
-                    {id:40, name:'Uğur Tekin', info:'Sound Designer'},
-                    {id:41, name:'Elif Ersoy', info:'Makeup Artist'},
-                    {id:42, name:'Gülay Koç', info:'Production Manager'}
-                ]
-            }
-        ]
+    const images = {
+        '../assets/etkinlikler/soylesi2.jpg': require('../assets/etkinlikler/soylesi2.jpg'),
+        '../assets/etkinlikler/soylesi.jpg': require('../assets/etkinlikler/soylesi.jpg'),
+        '../assets/etkinlikler/demodaydavet.jpg': require('../assets/etkinlikler/demodaydavet.jpg'),
+        '../assets/etkinlikler/sinemadavet.jpg': require('../assets/etkinlikler/sinemadavet.jpg'),
     };
+      
     
-
+    
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const results = dataForEtkinlik.Etkinlik.filter(item => {
-            return item.event_name.toLowerCase().includes(query.toLowerCase());
-        });
-        setSearchResults(results);
+        if (events.length > 0) {
+            const results = events.filter(event => {
+                return event.event_name.toLowerCase().includes(query.toLowerCase());
+            });
+            setSearchResults(results);
+        }
     };
+    
     
     const handleLinkPress = (link) => {
         if (link === "") {
@@ -127,7 +45,7 @@ export default function Etkinlikler({navigation}) {
         } else {
             Linking.openURL(link);
         }
-    }
+    } 
     const renderEventContent = (content) => {
         const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
     
@@ -174,35 +92,148 @@ export default function Etkinlikler({navigation}) {
         
         return differenceInDays;
     };
+ 
+    const [events, setEvents] = useState([]);
+    const [isEventInCalendar, setIsEventInCalendar] = useState([]);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            
+            try {
+                const token = await AsyncStorage.getItem('accesToken');
+                console.log(token)
     
-    const [heartPressedMap, setHeartPressedMap] = useState({});
-    const [plusPressedMap, setPlusPressedMap] = useState({}); 
+                const calendarResponse = await fetch(`http://${xxx}:8080/calender/all_event`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+    
+                if (!calendarResponse.ok) {
+                    throw new Error('Network response for calendar events was not ok');
+                }
+    
+                const calendarEvents = await calendarResponse.json();
 
-    const handleHeartPress = (itemId) => {
-        // Burada kalp simgesine basıldığında yapılacak işlemleri tanımlayabilirsiniz.
-        // Örneğin bir istek gönderip yanıt aldığınızda setHeartPressed(true) yapabilirsiniz.
-        // Aşağıda benzer şekilde handlePlusPress için de bir işlev tanımlayabilirsiniz.
-        // Bu örnekte Alert kullanarak basit bir bildirim gösteriyorum.
-        Alert.alert(`Heart pressed: ${itemId}`);
-        setHeartPressedMap({ ...heartPressedMap, [itemId]: !heartPressedMap[itemId] }); // Yanıt gelirse true yapın
+    
+                // Etkinlikleri al
+                const eventsResponse = await fetch(`http://${xxx}:8080/events/tum_etkinlikler`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+    
+                if (!eventsResponse.ok) {
+                    throw new Error('Network response for events was not ok');
+                }
+    
+                const eventData = await eventsResponse.json();
+    
+                const updatedEvents = eventData.map(event => {
+                    const isEventInCalendar = calendarEvents.some(
+                        calEvent => calEvent.event_id === event.id
+                    );
+                    return { ...event, isEventInCalendar };
+                });
+    
+                setEvents(updatedEvents);
+    
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
+    
+        fetchEvents();
+    }, []);
+    
+    
+
+    const handleHeartPress = async (item) => {
+        try {
+            const token = await AsyncStorage.getItem('accesToken');
+            
+            const response = await fetch(`http://${xxx}:8080/calender/all_event`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error('Takvimdeki etkinlikler alınamadı');
+            }
+    
+            const calendarEvents = await response.json();
+            const isEventInCalendar = calendarEvents.some(event => event.name === item.event_name && event.date === item.event_date.split('/')[0]);
+
+            if (isEventInCalendar) {
+                const deleteResponse = await fetch(`http://${xxx}:8080/calender/${item.id}/event`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+    
+                if (!deleteResponse.ok) {
+                    throw new Error('Takvimden silme işlemi başarısız');
+                }
+    
+                Alert.alert(`Takvimden Çıkarıldı!!\n \n ${item.event_name}`);
+            } else {
+                const eventInfo = {
+                    name: item.event_name, 
+                    date: item.event_date.split('/')[0]
+                };
+                
+                const addResponse = await fetch(`http://${xxx}:8080/calender/${item.id}/event`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(eventInfo)
+                });
+    
+                if (!addResponse.ok) {
+                    throw new Error('Takvime ekleme işlemi başarısız');
+                }
+    
+                Alert.alert(`Takvime Eklendi!!\n \n ${item.event_name}`);
+            }
+    
+            const updatedCalendarEvents = await fetch(`http://${xxx}:8080/calender/all_event`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            if (!updatedCalendarEvents.ok) {
+                throw new Error('Takvimdeki etkinlikler alınamadı');
+            }
+    
+            const updatedEvents = await updatedCalendarEvents.json();
+            const updatedIsEventInCalendar = updatedEvents.some(event => event.name === item.event_name && event.date === item.event_date.split('/')[0]);
+            
+            setEvents(prevEvents => prevEvents.map(event => {
+                if (event.id === item.id) {
+                    return { ...event, isEventInCalendar: updatedIsEventInCalendar };
+                }
+                return event;
+            }));
+    
+        } catch (error) {
+            console.error('Takvim işlemi hatası:', error);
+        }
     };
+    
+    
+    
+    
 
-    const handlePlusPress = (itemId) => {
-        // Burada artı simgesine basıldığında yapılacak işlemleri tanımlayabilirsiniz.
-        Alert.alert(`Plus pressed: ${itemId}`);
-        setPlusPressedMap({ ...plusPressedMap, [itemId]: !plusPressedMap[itemId] }); // Yanıt gelirse true yapın
+   
 
-    };
-
-    const [isButtonGreenMap, setIsButtonGreenMap] = useState({});
-
-    const handleAddContact = (itemId) => {
-        setIsButtonGreenMap(prevMap => ({
-            ...prevMap,
-            [itemId]: !prevMap[itemId]
-        }));
-        // Add contact logic here
-    };
     
     const [searchQueryForKatilimcilar, setSearchQueryForKatilimcilar] = useState('');
     const [searchResultsForKatilimcilar, setSearchResultsForKatilimcilar] = useState([]);
@@ -215,13 +246,17 @@ export default function Etkinlikler({navigation}) {
             console.log("EVENT HATA");
 
         const results = event.filter(participant => {
-            console.log(participant);
-
             return participant.name.toLowerCase().includes(query.toLowerCase());
         });
         setSearchResultsForKatilimcilar(results);
     };
 
+    const extractCoordinates = (konum) => {
+        const [latitude, longitude] = konum.split("/").map(Number);
+        return { latitude, longitude };
+    };
+    
+    
     return(
         <View style={{flex:1}}>
             <View style={{backgroundColor: 'white',}}>
@@ -233,8 +268,8 @@ export default function Etkinlikler({navigation}) {
                         style={{margin:20, backgroundColor:'#rgb(246, 246, 246)', fontFamily:"Times New Roman"}}
                     />
                     {searchResults.length === 0 && searchQuery !== '' && (
-                        <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight:'bold' }}>
-                            No results found
+                        <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight:'bold', color:'red' }}>
+                            Sonuç Bulunamadı
                         </Text>
                     )}
 
@@ -264,32 +299,32 @@ export default function Etkinlikler({navigation}) {
                                                         <View style={{height:"100%"}}>
                                                             
                                                             <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 10, marginTop:10 }}>{selectedItem.event_name}</Text>  
-
                                                             {renderEventContent(selectedItem)}
                                                             
-                                                            <TouchableOpacity onPress={() => handleLinkPress(selectedItem.link)}>
-                                                                <Text style={{marginTop:15, color: 'red', textAlign:'center', fontSize: 20, fontWeight:'bold', textShadowOffset:1 , textShadowColor:'black', textShadowRadius:2}}>Katilmak için</Text>
-                                                            </TouchableOpacity>
 
                                                             <Image
                                                                 style={{ height: 600, width: '100%',resizeMode:'contain', marginVertical:20 }}
-                                                                source={selectedItem.imageUri}
+                                                                source={images[selectedItem.imageUri]}
                                                             />
-                                                            {!selectedItem.is_online ? (
+                                                            {selectedItem.konum ? (
                                                                 <View style={{height:500}}>
                                                                         {/* To run this without expo check https://docs.expo.dev/versions/latest/sdk/map-view/ */}
+                                                                        <Text style={{fontSize:20, fontWeight:'bold', textAlign:'center', paddingBottom:20}}>
+                                                                            Etkinlik Haritası
+                                                                        </Text>
                                                                         <MapView
                                                                             style={{width: "100%", height:"100%"}}
                                                                             initialRegion={{
-                                                                                latitude: selectedItem.konum.latitude,
-                                                                                longitude: selectedItem.konum.longitude,
+                                                                                latitude: selectedItem && selectedItem.konum ? extractCoordinates(selectedItem.konum).latitude : 0,
+                                                                                longitude: selectedItem && selectedItem.konum ? extractCoordinates(selectedItem.konum).longitude : 0,
                                                                                 latitudeDelta: 0.01,
                                                                                 longitudeDelta: 0.01,
                                                                             }}
                                                                             onPress ={() => {setMapModalVisible(!mapModalVisible) }}>
                                                                             <Marker
                                                                                 title={selectedItem.event_name}
-                                                                                coordinate={{ latitude: selectedItem.konum.latitude, longitude: selectedItem.konum.longitude }}
+                                                                                coordinate={extractCoordinates(selectedItem.konum)}
+
                                                                                 calloutVisible={true} 
                                                                             />
                                                                         </MapView>
@@ -297,15 +332,16 @@ export default function Etkinlikler({navigation}) {
                                                                         <MapView
                                                                             style={{width: "100%", height:"100%"}}
                                                                             initialRegion={{
-                                                                                latitude: selectedItem.konum.latitude,
-                                                                                longitude: selectedItem.konum.longitude,
+                                                                                latitude: selectedItem && selectedItem.konum ? extractCoordinates(selectedItem.konum).latitude : 0,
+                                                                                longitude: selectedItem && selectedItem.konum ? extractCoordinates(selectedItem.konum).longitude : 0,
                                                                                 latitudeDelta: 0.01,
                                                                                 longitudeDelta: 0.01,
                                                                             }}
                                                                             >
                                                                             <Marker
                                                                             title={selectedItem.event_name}
-                                                                            coordinate={{ latitude: selectedItem.konum.latitude, longitude: selectedItem.konum.longitude }}
+                                                                            coordinate={extractCoordinates(selectedItem.konum)}
+
                                                                             />
                                                                         </MapView>  
                                                                             <TouchableOpacity 
@@ -325,9 +361,11 @@ export default function Etkinlikler({navigation}) {
                                                                     </Modal>
                                                                     
                                                                 </View>
-                                                                ) : null}
-                                    {/* KATILIMCILAR */}
-                                                                <Text style={{textAlign: 'center', fontSize: 25, padding: 15, fontWeight: 'bold', marginTop: 10 }}>Katılımcılar</Text>
+                                                            ) : <TouchableOpacity onPress={() => handleLinkPress(selectedItem.link)}>
+                                                                    <Text style={{marginTop:15, color: 'red', textAlign:'center', fontSize: 20, fontWeight:'bold', textShadowOffset:1 , textShadowColor:'black', textShadowRadius:2}}>Etkinliğimiz Online Yapılacaktır.{'\n'}Katılmak için Tıklayınız</Text>
+                                                                </TouchableOpacity>}
+                                                                {/* KATILIMCILAR */}
+                                                                <Text style={{textAlign: 'center', fontSize: 25, padding: 15, fontWeight: 'bold', marginTop: 60 }}>Katılımcılar</Text>
                                                                 <Searchbar
                                                                         placeholder="Search"
                                                                         onChangeText={(query) => handleSearchForKatilimcilar(query, selectedItem.katilimcilar)}
@@ -337,7 +375,7 @@ export default function Etkinlikler({navigation}) {
 
                                                                 {searchResultsForKatilimcilar.length === 0 && searchQueryForKatilimcilar !== '' && (
                                                                     <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight:'bold' }}>
-                                                                        No results found
+                                                                        Sonuç Bulunamadı
                                                                     </Text>
                                                                 )}
                                                                 
@@ -350,16 +388,34 @@ export default function Etkinlikler({navigation}) {
                                                                             <Ionicons name="person" size={24} color="black" style={{ marginRight: 8 }} />
                                                                             <View>
                                                                                 <Text style={{ fontSize: 16 }}>{participant.name}</Text>
-                                                                                <Text style={{ fontSize: 14, color: '#888' }}>{participant.info}</Text>
+                                                                                <Text style={{ fontSize: 14, color: '#888' }}>{participant.info.split(',')[0]}</Text>
                                                                             </View>
                                                                         </TouchableOpacity>
                                                                         {isContactDetailsVisible[participant.id] && (
-                                                                            <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', width:'80%' }}>
-                                                                                <Text>{participant.name}'yi Kontağa</Text>
-                                                                                <TouchableOpacity onPress={() => handleAddContact(participant.id)} style={{ marginLeft: 8 , flexDirection: 'row', alignItems: 'center'}}>
-                                                                                    <Ionicons name="add-circle" size={30} color={isButtonGreenMap[participant.id] ? 'green' : 'red'} style={{ textShadowRadius: 5, textShadowColor: 'white' }} />
-                                                                                    <Text style={{ textShadowRadius: 5, textShadowColor: 'white' ,color: isButtonGreenMap[participant.id] ? 'green' : 'red' , fontSize:20 }}>{isButtonGreenMap[participant.id] ? 'Çıkar' : 'Ekle'} </Text>
+                                                                            <View style={{ marginTop: 8, marginLeft: 10, width:'80%' }}>
+
+                                                                                <TouchableOpacity onPress={() => Linking.openURL(`https://instagram.com/${participant.info.split(',')[1]}`)}>
+                                                                                    <Text style={{fontSize:15, fontWeight:'400', color: '#rgb(41, 64, 153)', marginBottom:10}}>
+                                                                                        <Text style={{color: 'black',fontWeight:'bold'}}>Instagram:</Text> {participant.info.split(',')[1]}
+                                                                                    </Text>
                                                                                 </TouchableOpacity>
+                                                                                
+                                                                                <TouchableOpacity onPress={() => Linking.openURL(`https://twitter.com/${participant.info.split(',')[2]}`)}>
+                                                                                    <Text style={{fontSize:15, fontWeight:'400', color: '#rgb(41, 64, 153)', marginBottom:10}}>
+                                                                                        <Text style={{color: 'black',fontWeight:'bold'}}>X:</Text> {participant.info.split(',')[2]}
+                                                                                    </Text>
+                                                                                </TouchableOpacity>
+                                                                                <TouchableOpacity onPress={() => Linking.openURL(`https://linkedin.com/in/${participant.info.split(',')[3]}`)}>
+                                                                                    <Text style={{fontSize:15, fontWeight:'400', color: '#rgb(41, 64, 153)', marginBottom:10}}>
+                                                                                        <Text style={{color: 'black',fontWeight:'bold'}}>Linkedin:</Text> {participant.info.split(',')[3]}
+                                                                                    </Text>
+                                                                                </TouchableOpacity>
+                                                                                <TouchableOpacity onPress={() => Linking.openURL(`https://facebook.com/${participant.info.split(',')[4]}`)}>
+                                                                                    <Text style={{fontSize:15, fontWeight:'400', color: '#rgb(41, 64, 153)', marginBottom:10}}>
+                                                                                        <Text style={{color: 'black',fontWeight:'bold'}}>Facebook:</Text> {participant.info.split(',')[4]}
+                                                                                    </Text>
+                                                                                </TouchableOpacity>
+                                                                                <Text></Text>
                                                                             </View>
                                                                         )}
                                                                     </View>
@@ -385,46 +441,49 @@ export default function Etkinlikler({navigation}) {
 
 
                     <FlatList
-                        data={searchResults.length === 0 ? dataForEtkinlik.Etkinlik : searchResults}
+                        data={searchResults.length === 0 ? events.sort((a, b) => moment(b.event_date, 'DD-MM-YYYY HH:mm') - moment(a.event_date, 'DD-MM-YYYY HH:mm')) : searchResults}
                         style={{ flex: 1, width: "100%" }}
                         scrollEnabled={false}
                         renderItem={({ item }) => (
+
                             <View style={{ alignItems: 'center' }}>
-                                <Text style={{ height: 0, backgroundColor: 'black', width: '100%', marginVertical: 30 }} />
 
-                                <View style={{ width: '100%', paddingHorizontal: 20 }}>
-                                        <TouchableOpacity onPress={() => { setModalVisible(true); setSelectedItem(item) }} >
-                                            <View style={{ height: 300, alignItems: 'center', borderRadius: 10, backgroundColor: '#b9b9b9' }}>
-                                                <Image
-                                                    style={{ height: 300, width: '100%', borderRadius: 10 }}
-                                                    source={item.imageUri}
-                                                />
-                                                <View style={{ position: 'absolute', top: 10, right: 10, flexDirection: 'row' }}>
-                                                    <TouchableOpacity onPress={() => handleHeartPress(item.id)}>
-                                                        <Ionicons name="heart" size={30} color={heartPressedMap[item.id] ? 'green' : 'red'} style={{ marginRight: 10, textShadowRadius: 6, textShadowColor: 'white' }} />
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity onPress={() => handlePlusPress(item.id)}>
-                                                        <Ionicons name="add-circle" size={30} color={plusPressedMap[item.id] ? 'green' : 'red'} style={{ textShadowRadius: 5, textShadowColor: 'white' }} />
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </View>
-                                        </TouchableOpacity>
+                            <Text style={{ height: 0, backgroundColor: 'black', width: '100%', marginVertical: 30 }} />
 
-                                    <Text style={{ fontWeight: 'bold', fontSize: 15, textAlign: 'left', marginVertical: 10 }}>
-                                        {item.event_name}{'\n'}
-                                        {getDaysUntilEvent(item.event_date) > 0 ? (
-                                            <Text style={{ color: 'rgb(154, 200, 160)', textAlign: 'left' }}>{getDaysUntilEvent(item.event_date)} gün sonra</Text>
-                                        ) : (
-                                            <Text style={{ color: 'rgb(250, 154, 154)', textAlign: 'left' }}>{Math.abs(getDaysUntilEvent(item.event_date))} gün önce</Text>
-                                        )}
-                                    </Text>
-                                </View>
+                            <View style={{ width: '100%', paddingHorizontal: 20 }}>
+                                <TouchableOpacity onPress={() => { setModalVisible(true); setSelectedItem(item) }} >
+                                    <View style={{ height: 300, alignItems: 'center', borderRadius: 10, backgroundColor: '#b9b9b9' }}>
+                                        <Image
+                                            style={{ height: 300, width: '100%', borderRadius: 10 }}
+                                            source={images[item.imageUri]}
+                                        />
+                                        <View style={{ position: 'absolute', top: 10, right: 10 }}>
+                                            <TouchableOpacity onPress={() => handleHeartPress(item)} style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor:'rgba(256,256,256, 0.6)', paddingLeft:10, paddingVertical:10, borderRadius:10 }}>
+
+                                                
+                                                    {item.isEventInCalendar ? <Ionicons name="remove-circle" size={30} color={item.isEventInCalendar ? 'green' : 'red'} style={{ marginRight: 10 }} /> : <Ionicons name="add-circle" size={30} color={item.isEventInCalendar ? 'green' : 'red'} style={{ marginRight: 10 }} />}
+                                                
+                                                
+                                            </TouchableOpacity>
+                                        </View>
+
+                                    </View>
+                                </TouchableOpacity>
+
+                                <Text style={{ fontWeight: 'bold', fontSize: 15, textAlign: 'left', marginVertical: 10 }}>
+                                {item.event_name}{'\n'}
+                                {getDaysUntilEvent(item.event_date.split('/')[0]) > 0 ? (
+                                    <Text style={{ color: 'rgb(154, 200, 160)', textAlign: 'left' }}>{getDaysUntilEvent(item.event_date.split('/')[0])} gün sonra</Text>
+                                ) : (
+                                    <Text style={{ color: 'rgb(250, 154, 154)', textAlign: 'left' }}>{Math.abs(getDaysUntilEvent(item.event_date.split('/')[0]))} gün önce</Text>
+                                )}
+                                </Text>
                             </View>
-
-
+                            </View>
                         )}
                         keyExtractor={item => item.id.toString()}
-                />
+                        />
+
                
                     
                 </ScrollView>

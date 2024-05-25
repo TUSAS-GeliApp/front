@@ -1,135 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, Linking, Modal, ScrollView, Text, TouchableOpacity, View, Platform, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import MapView, { Marker } from 'react-native-maps';
 import { Searchbar } from 'react-native-paper';
+import { xxx } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Program({ navigation }) {
     const [mapModalVisible, setMapModalVisible] = useState(false);
     const [katilimciModalVisible, setKatilimciModalVisible] = useState(false);
-
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isContactDetailsVisible, setIsContactDetailsVisible] = useState({});
-  
+    const [combinedData, setcombinedData] = useState([]);
 
+    useEffect(() => {
+        const fetchprograms = async () => {
+            try {
+                const accessToken = await AsyncStorage.getItem('accesToken');
+                const response = await fetch(`http://${xxx}:8080/program/all_program`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+                const data = await response.json();
 
-    const dataForProgram = {
-        Program: [
-            {   
-                id: 1,
-                event_name: "Take off 2024",
-                event_date: "Aralık 2024",
-                imageUri: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/MX8gyea7KQpyZt6X18B7SFf5WAdFMRtO.jpg",
-                konum: { latitude: 40.99744292183745, longitude: 29.062630435582076 },
-                link: "https://takeoffistanbul.com/tr/",
-                event_content: `//Aşamalar//
-                                /Erken Aşama/
-                                MVP/POC süreçlerini tamamlamış, şirketleşmiş, yatırım almış ve/veya satış yapmış girişimlerdir.
-                                /Büyüme Aşaması/
-                                MVP/POC süreçlerini tamamlamış, şirketleşmiş, yatırım almış (1M - 25 M$), satış yapmış ve uluslararası operasyona(satışa) başlamış girişimlerdir.
-                                //Girişimciler//
-                                İş fikirlerini, ürün veya hizmetlerini alanlarında uzman mentorlar ile görüşme; yatırımcılarla buluşarak ticari faaliyete geçmekte hız kazanma; kurumlarla işbirliği yapma ve girişimler arasında yarışıp büyük yatırım ödülünü ve daha fazlasını kazanma şansı elde ederler.
-                                //Kurumlar//
-                                Girişim ekosistemindeki faaliyetlerini tanıtmak ve destekledikleri girişimler ile birlikte etkinlikte yer alma imkanı bulurlar. Zirvede yer alan girişimler ile tanışarak girişimlerin ürün veya hizmetlerini tanımak ve olası işbirlikleri yapma fırsatına sahip olurlar.
-                                //Yatırımcılar//
-                                Girişimcilere finansal destek sağlayarak, geleceğin şirketlerinin ortaya çıkmasına olanak sağlama ve zirvedeki etkinliklerle network geliştirme fırsatına sahip olurlar. Teknoloji odaklı yatırım yapan fonlar, yatırımcılar ve LP'ler ile tanışma ve birlikte yatırım yapma imkanı bulurlar.
-                                //Partnerimiz Olun//
-                                2024'te Partnerlikleri için Başvurun Küresel girişim ekosistemini İstanbul, Türkiye’de buluşturan Take Off’ta size uygun partnerlik seçeneği ile yer alarak prestijli partnerler arasında yerinizi ayırtın!
-                                /BAŞVUR/
-                                info@takeoffistanbul.com
-                                `,
-                konusmacilar: [{id: 1, name:'Selçuk Bayraktar', info:'TEKNOFEST Yönetim Kurulu Başkanı & T3 Vakfı Mütevelli Heyeti Başkanı', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/q4ovXBdrKmevSvv7kNmsf2CLjTYT6pny.jpg"},
-                                {id: 2, name:'Mehmet Fatih Kacır', info:'T.C. Sanayi ve Teknoloji Bakanı & TEKNOFEST İcra Kurulu Başkanı', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/7XHGeNcSzyqHoLI1q97vf94nPE4Jlnyh.jpg"},
-                                {id: 3, name:'Prof. Dr. Hakan Karakaş', info:'Vice President, Republic of Türkiye of Presidency of Defence Industries', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/oSoVX581JRORcaTlEFUjqPsKiCOmgDZW.png"},
-                                {id: 4, name:'Sheikh Mansoor Bin Khalifa Al-Thani', info:'Chairman of MBK Holding', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/86VtkHC4QIRGWTrq9eklCW0wezjITrMh.png"},
-                                {id: 5, name:'Prof. Dr. Mirco Kovac', info:'Founder and Director, Laboratory of Sustainability Robotics - EMPA', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/mg2KJ4lDxTeo1QY2b0I5Wb9k8I2ilfvS.jpg"},
-                                {id: 6, name:'Jean-Yves Le Gall', info:'Former President, International Astronomical Federation', link:"https://cdn.takeoffistanbul.com/media/upload/userFormUpload/Rj8FfZCczbQPvfPgq4JBpyA2wb5DoFMl.jpg"},
-                            ],
-                sss: `
-                    Sizinle nasıl iletişime geçebilirim?
-                    Bize info@takeoffistanbul.com e-posta adresi üzerinden ulaşabilirsiniz.
-                    Herhangi bir ülke kısıtlaması var mı?
-                    Take Off Girişim Zirvesine herhangi bir ülkeden girişimciler başvurabilir.
-                    Take Off yarışmasına hangi seviyedeki girişimler katılabilir?
-                    Başvuru kılavuzunda tanımlanan Erken Aşama ve Büyüme Aşaması kategorilerine uyan girişimler başvuru yapabilir.
-                    Take Off yarışmasında girişimlerin başvurabileceği dikey alanlar nelerdir?
-                    Teknoloji odaklı girişimler başvuru yapabilir.
-                    Girişimlerin yarışma içindeki sunum dili nedir?
-                    Pre-Take Off da sunum dili Türkçedir. Take Off İstanbul’da Erken Aşama ve Büyüme Aşama girişim yarışma dili İngilizce’dir.
-                    Ziyaretçilerin katılması için son kayıt tarihi nedir?
-                    Ziyaretçi kayıtları duyurulacaktır.
-                    Yarışmalarda girişimlere sağlanan imkanlar ve ödüller nelerdir?
-                    ● Yerel ve Uluslararası Mentorlarla Ağ Oluşturma
+                const responseKonusmacilar = await fetch(`http://${xxx}:8080/program/all_program_speaker`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+                const dataKonusmacilar = await responseKonusmacilar.json();
+                const responseKatilimcilar = await fetch(`http://${xxx}:8080/program/all_program_user`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                    },
+                });
+                const dataKatilimcilar = await responseKatilimcilar.json();
+                
+                const combinedData = {...data[0], 'konusmacilar':dataKonusmacilar, 'katilimcilar': dataKatilimcilar};
+                setcombinedData([combinedData]);
 
-                    ● Stant Alanında Ürün/Hizmet Sunma Fırsatı
-
-                    ● Yatırımcılarla Buluşma
-
-                    ● Kurumlarla İşbirliği Toplantıları
-
-                    ● Ödül Kazanma Fırsatı
-                    Girişimlerin fikri mülkiyetlerinde yarışma tarafından hak talep ediliyor mu?
-                    Fikri Mülkiyet hakları talep edilmemektedir.
-                    Yarışma ekipleri en az kaç kişi olabilir?
-                    Ekipler en az iki kişiden oluşması gerekmektedir.
-                    Aynı ekip olarak iki farklı proje ile yarışmaya başvurabilir miyim?
-                    Bir ekip sadece bir girişim ile başvuru yapabilir.
-                    İki farklı girişim ekibinde yer alarak yarışmaya başvuru yapabilir miyim?
-                    Bir kişi sadece bir girişim üzerinden başvuru yapabilir.
-                `,
-                katilimcilar:  [{ id: 1, name: 'Selçuk Bayraktar', info: 'TEKNOFEST Yönetim Kurulu Başkanı & T3 Vakfı Mütevelli Heyeti Başkanı', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/q4ovXBdrKmevSvv7kNmsf2CLjTYT6pny.jpg" },
-                                { id: 2, name: 'Mehmet Fatih Kacır', info: 'T.C. Sanayi ve Teknoloji Bakanı & TEKNOFEST İcra Kurulu Başkanı', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/7XHGeNcSzyqHoLI1q97vf94nPE4Jlnyh.jpg" },
-                                { id: 3, name: 'Hakan Karakaş', info: 'Vice President, Republic of Türkiye of Presidency of Defence Industries', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/oSoVX581JRORcaTlEFUjqPsKiCOmgDZW.png" },
-                                { id: 4, name: 'Sheikh Mansoor Bin Khalifa Al-Thani', info: 'Chairman of MBK Holding', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/86VtkHC4QIRGWTrq9eklCW0wezjITrMh.png" },
-                                { id: 5, name: 'Mirco Kovac', info: 'Founder and Director, Laboratory of Sustainability Robotics - EMPA', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/mg2KJ4lDxTeo1QY2b0I5Wb9k8I2ilfvS.jpg" },
-                                { id: 6, name: 'Jean-Yves Le Gall', info: 'Former President, International Astronomical Federation', pp_link: "https://cdn.takeoffistanbul.com/media/upload/userFormUpload/Rj8FfZCczbQPvfPgq4JBpyA2wb5DoFMl.jpg" },
-                                { id: 7, name: 'John Doe', info: 'CEO of Tech Innovators', pp_link: "" },
-                                { id: 8, name: 'Jane Smith', info: 'CTO of Future Solutions', pp_link: "" },
-                                { id: 9, name: 'Albert Johnson', info: 'Lead Engineer at AI Labs', pp_link: "" },
-                                { id: 10, name: 'Emily Davis', info: 'Head of Marketing at Creative Ventures', pp_link: "" },
-                                { id: 11, name: 'Michael Brown', info: 'Senior Data Scientist at Big Data Inc.', pp_link: "" },
-                                { id: 12, name: 'Sarah Wilson', info: 'Product Manager at Tech Solutions', pp_link: "" },
-                                { id: 13, name: 'David Clark', info: 'Founder & CEO of Startup Hub', pp_link: "" },
-                                { id: 14, name: 'Laura Martinez', info: 'Research Scientist at BioTech Labs', pp_link: "" },
-                                { id: 15, name: 'James Anderson', info: 'Chief Financial Officer at FinTech Corp', pp_link: "" },
-                                { id: 16, name: 'Alice Thompson', info: 'Lead Designer at Creative Studios', pp_link: "" },
-                                { id: 17, name: 'Robert Lee', info: 'AI Specialist at Tech Minds', pp_link: "" },
-                                { id: 18, name: 'Olivia Garcia', info: 'Director of Engineering at Innovative Solutions', pp_link: "" },
-                                { id: 19, name: 'William Martinez', info: 'Head of R&D at Bio Innovations', pp_link: "" },
-                                { id: 20, name: 'Sophia Robinson', info: 'Marketing Director at Global Ventures', pp_link: "" },
-                                { id: 21, name: 'Liam Clark', info: 'Founder of Startup Incubator', pp_link: "" },
-                                { id: 22, name: 'Emma Lewis', info: 'Senior Developer at Code Masters', pp_link: "" },
-                                { id: 23, name: 'Noah Walker', info: 'Product Designer at Creative Labs', pp_link: "" },
-                                { id: 24, name: 'Ava Hall', info: 'CTO at Innovative Tech', pp_link: "" },
-                                { id: 25, name: 'Mason Allen', info: 'CEO at Tech Pioneers', pp_link: "" },
-                                { id: 26, name: 'Isabella Young', info: 'Lead Scientist at Bio Research', pp_link: "" },
-                                { id: 27, name: 'Lucas King', info: 'Head of Development at NextGen Solutions', pp_link: "" },
-                                { id: 28, name: 'Mia Wright', info: 'Project Manager at Future Innovators', pp_link: "" },
-                                { id: 29, name: 'Ethan Scott', info: 'Data Analyst at Analytics Pro', pp_link: "" },
-                                { id: 30, name: 'Amelia Harris', info: 'UX Designer at DesignWorks', pp_link: "" },
-                                { id: 31, name: 'Henry Adams', info: 'Cybersecurity Expert at SecureTech', pp_link: "" },
-                                { id: 32, name: 'Charlotte Nelson', info: 'Innovation Manager at TechFront', pp_link: "" },
-                                { id: 33, name: 'Alexander Carter', info: 'Chief Scientist at Quantum Research', pp_link: "" },
-                                { id: 34, name: 'Grace Mitchell', info: 'AI Researcher at Smart Innovations', pp_link: "" },
-                                { id: 35, name: 'James Baker', info: 'CEO at Future Tech Labs', pp_link: "" }
-                            
-                            ],
+            } catch (error) {
+                console.error('Error fetching program data:', error);
             }
-        ] 
-    };
+        };
 
-    const handleLinkPress = (link) => {
-        if (link === "") {
-            Linking.openURL("https://www.tusas.com/iletisim");
-        } else {
-            Linking.openURL(link);
-        }
-    };
-
-    const handleMapPress = () => {
-        setMapModalVisible(!mapModalVisible);
-    };
+        fetchprograms();
+    }, []);
+ 
     
     const renderTextWithLinks = (text, index) => {
         const parts = text.split(/(\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b)/g);
@@ -155,46 +77,45 @@ export default function Program({ navigation }) {
     };
     const handleSearch = (query) => {
         setSearchQuery(query);
-        const results = dataForProgram.Program[0].katilimcilar.filter(katilimci =>
-            katilimci.name.toLowerCase().includes(query.toLowerCase())
-        );
-        setSearchResults(results);
+        if (combinedData.length > 0 && combinedData[0].katilimcilar && Array.isArray(combinedData[0].katilimcilar)) {
+            const results = combinedData[0].katilimcilar.filter(katilimci =>
+                katilimci.name.toLowerCase().includes(query.toLowerCase())
+            );
+            setSearchResults(results);
+        } else {
+            setSearchResults([]);
+        }
     };
+    
 
-    const Listofkatilimcilar = searchQuery ? searchResults : dataForProgram.Program[0].katilimcilar;
 
     const getInitials = (name) => {
         const initials = name.split(' ').map(word => word[0]).join('').slice(0, 2);
         return initials;
     };
 
-    const [isButtonGreenMap, setIsButtonGreenMap] = useState({});
 
-    const handleAddContact = (itemId) => {
-        setIsButtonGreenMap(prevMap => ({
-            ...prevMap,
-            [itemId]: !prevMap[itemId]
-        }));
-        // Add contact logic here
+    const extractCoordinates = (konum) => {
+        const [latitude, longitude] = konum.split("/").map(Number);
+        return { latitude, longitude };
     };
-
     return (
         <ScrollView style={{ flex: 1}}>
-            {dataForProgram.Program.map((item) => (
+            {combinedData.map((item) => (
                 <View style={{ alignItems: 'center' }}>
                     
                     <View style={{ alignItems: 'center' }}>
                         <Image
                             style={{ width:'100%', resizeMode: 'cover', aspectRatio: 1 }}
-                            source={{ uri: item.imageUri }}
+                            source={{ uri: item.image_path }}
                         />
-                        <Text style={{shadowOpacity:1, textShadowColor:'black',textShadowRadius:10,  fontSize:50, color:'white', fontWeight:'bold', position: 'absolute', top: 200, bottom: 0}}>
-                            {item.event_name}
+                        <Text style={{shadowOpacity:1, textShadowColor:'black', textShadowRadius:10,  fontSize:50, color:'white', fontWeight:'bold', position: 'absolute', top: 200, bottom: 0}}>
+                            {item.name}
                         </Text>
                     </View>
                     <View style={{ alignItems: 'center', marginTop: 20 }}>
                         <Text style={{padding:20, marginTop: -50}}>
-                            {item.event_content.split('\n').map((content, index) => {
+                            {item.content.split('\n').map((content, index) => {
                                 content = content.trim();
                                 if (content.trim().startsWith('//') && content.trim().endsWith('//')) {
                                     return (
@@ -218,25 +139,31 @@ export default function Program({ navigation }) {
                 
                     {/* Konuşmacılar */}
                     <Text style={{height:2, backgroundColor:'black', width:'100%', marginBottom:30, marginTop:-70}}/>
-                    
+
                     <View style={{ alignItems: 'center' }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 35, marginBottom: 10, textShadowRadius:2, textShadowColor:'rgb(41, 64, 153)' }}>
                             Konuşmacılar
                         </Text>
                         {item.konusmacilar.map((konuşmacı, index) => (
                             <View key={index} style={{ alignItems: 'center', padding:20 }}>
-                                <Image
-                                    source={{ uri: konuşmacı.link }}
-                                    style={{ width: 100, height: 100, borderRadius: 50 }}
-                                />
+                                {konuşmacı.link == " " ? (
+                                    <View style={{ width: 100, height: 100, borderRadius: 50, backgroundColor: 'grey', justifyContent: 'center', alignItems: 'center' }}>
+                                        <Text style={{ color: 'white', fontSize: 30, fontWeight: 'bold' }}>
+                                            {konuşmacı.name.split(' ').map(word => word[0]).join('')}
+                                        </Text> 
+                                    </View>
+                                ) : (
+                                    
+                                    <Image
+                                        source={{ uri: konuşmacı.link }}
+                                        style={{ width: 100, height: 100, borderRadius: 50 }}
+                                        />
+                                )}
                                 <Text style={{ fontWeight: 'bold', marginTop: 10, textShadowRadius:1, textShadowColor:'rgb(41, 64, 153)',fontSize:20 }}>{konuşmacı.name}</Text>
                                 <Text style={{textAlign:'center'}}>{konuşmacı.info}</Text>
                             </View>
                         ))}
                     </View>
-
-
-                
                     {/* SSS */}
                     <Text style={{height:2, backgroundColor:'black', width:'100%', marginBottom:-20}}/>
 
@@ -261,7 +188,7 @@ export default function Program({ navigation }) {
                         </Text>
                     </View>
 
-                    {/* Apply Program  */}
+                    {/* Apply Program  BUNDAN EMIN DEGILIM */}
                     <View style={{ width: "100%", alignItems:'center'}}>
                         <Text style={{height:2, backgroundColor:'black', width:'100%', marginBottom:20}}/>
                         <Text style={{fontSize:25, fontWeight:'bold', textShadowRadius:2, textShadowColor:'rgb(41, 64, 153)'}}>
@@ -274,7 +201,6 @@ export default function Program({ navigation }) {
                         </TouchableOpacity>
                     </View>
 
-                    
                     {/* Harita */}
                     <Text style={{height:2, backgroundColor:'black', width:'100%', marginTop:30}}/>
                     <View style={{ width: "100%", height: 500 }}>
@@ -284,16 +210,16 @@ export default function Program({ navigation }) {
                         <MapView
                             style={{ width: "100%", height: "80%" }}
                             initialRegion={{
-                                latitude: item.konum.latitude,
-                                longitude: item.konum.longitude,
+                                latitude: item && item.location ? extractCoordinates(item.location).latitude : 0,
+                                longitude: item && item.location ? extractCoordinates(item.location).longitude : 0,
                                 latitudeDelta: 0.01,
                                 longitudeDelta: 0.01,
                             }}
                             onPress={() => setMapModalVisible(!mapModalVisible)}
                         >
                             <Marker
-                                title={item.event_name}
-                                coordinate={{ latitude: item.konum.latitude, longitude: item.konum.longitude }}
+                                title={item.name}
+                                coordinate={extractCoordinates(item.location)}
                                 calloutVisible={true}
                             />
                         </MapView>
@@ -302,15 +228,15 @@ export default function Program({ navigation }) {
                                 <MapView
                                     style={{ flex: 1 }}
                                     initialRegion={{
-                                        latitude: item.konum.latitude,
-                                        longitude: item.konum.longitude,
+                                        latitude: item && item.location ? extractCoordinates(item.location).latitude : 0,
+                                        longitude: item && item.location ? extractCoordinates(item.location).longitude : 0,
                                         latitudeDelta: 0.01,
                                         longitudeDelta: 0.01,
                                     }}
                                 >
                                     <Marker
-                                        title={item.event_name}
-                                        coordinate={{ latitude: item.konum.latitude, longitude: item.konum.longitude }}
+                                        title={item.name}
+                                        coordinate={extractCoordinates(item.location)}
                                     />
                                 </MapView>
                                 <TouchableOpacity 
@@ -341,10 +267,7 @@ export default function Program({ navigation }) {
                         </TouchableOpacity>
                     </View>
                     <Modal visible={katilimciModalVisible}>
-                        
                             <View style={{ flex: 1, backgroundColor:'black' }}>
-                                
-                                
                                     <View style={{ flexDirection: 'row', alignItems: 'center', width:'100%',height: 50 }}>
                                         <TouchableOpacity 
                                         onPress={() => setKatilimciModalVisible(!katilimciModalVisible)} >
@@ -370,60 +293,70 @@ export default function Program({ navigation }) {
                                 
                                 <ScrollView style={{ height: '100%' }}>
                                     {searchResults.length === 0 && searchQuery !== '' && (
-                                        <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight: 'bold', color: 'white' }}>
-                                        No results found
+                                        <Text style={{ paddingVertical: 40, textAlign: 'center', fontSize: 20, fontWeight:'bold', color:'red' }}>
+                                            Sonuç Bulunamadı
                                         </Text>
                                     )}
                                     {(searchQuery === '' ? item.katilimcilar : searchResults).map((katilimci, index) => (
                                         <View key={index}>
                                         {/* Katilimci görüntüsü */}
+                                        {console.log(katilimci.id)}
+
                                         <TouchableOpacity
                                             onPress={() => {
                                             setIsContactDetailsVisible({ ...isContactDetailsVisible, [katilimci.id]: !isContactDetailsVisible[katilimci.id] });
                                             }}
                                             style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 10, borderRadius: 10, margin: 10}}
                                         >
-                                            {katilimci.pp_link ? (
-                                            <Image
-                                                source={{ uri: katilimci.pp_link }}
-                                                style={{ width: 50, height: 50, borderRadius: 50 }}
-                                            />
-                                            ) : (
-                                            <View style={{ width: 50, height: 50, borderRadius: 50, backgroundColor: 'grey', justifyContent: 'center', alignItems: 'center' }}>
-                                                <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
-                                                {getInitials(katilimci.name)}
-                                                </Text>
+                                            {katilimci.pp_link == " "  ? (
+                                                <View style={{ width: 50, height: 50, borderRadius: 50, backgroundColor: 'grey', justifyContent: 'center', alignItems: 'center' }}>
+                                                    <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold' }}>
+                                                    {getInitials(katilimci.name)}
+                                                    </Text>
+                                                </View>
+                                                ) : (
+                                                <Image
+                                                    source={{ uri: katilimci.pp_link }}
+                                                    style={{ width: 50, height: 50, borderRadius: 50 }}
+                                                />
+                                                )}
+                                            <View style={{ marginLeft: 10, width: '100%' }}>
+                                                <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white'}}>  {katilimci.name}</Text>
                                             </View>
-                                            )}
-                                            <View style={{ marginLeft: 10, width: '70%' }}>
-                                                <Text style={{ fontSize: 18, fontWeight: 'bold', color: 'white' }}>{katilimci.name}</Text>
-                                                <Text style={{ fontSize: 10, color: 'white' }}>{katilimci.info}</Text>
-                                            </View>
-                                            <TouchableOpacity onPress={() => handleAddContact(katilimci.id)} >
-                                                <Ionicons name="add-circle" size={30} color={isButtonGreenMap[katilimci.id] ? 'green' : 'red'} style={{ textShadowRadius: 5, textShadowColor: 'white' }} />
-                                            </TouchableOpacity>
+                                           
                                         </TouchableOpacity>
                                         {/* Detaylar */}
                                         {isContactDetailsVisible[katilimci.id] && (
-                                            <View style={{ backgroundColor: 'lightgrey', padding: 10, margin: 10, borderRadius: 10 }}>
-                                            <Text>{katilimci.name}</Text>
-                                            <Text>{katilimci.name}</Text>
-                                            <Text>{katilimci.name}</Text>
+                                            <View style={{ backgroundColor: 'lightgrey', padding: 10, margin: 10, borderRadius: 10}}>
+                                                <Text style={{fontSize:22, fontWeight:'bold'}}>{katilimci.name}</Text>
+                                                <Text style={{fontSize:17, fontWeight:'700'}}>{katilimci.info}</Text>
+                                                <TouchableOpacity onPress={() => Linking.openURL(`https://instagram.com/${katilimci.socials.split(' ')[0]}`)}>
+                                                    <Text style={{fontSize:13, fontWeight:'400', color: '#rgb(41, 64, 153)'}}>
+                                                        <Text style={{color: 'black',fontWeight:'600'}}>Instagram:</Text> {katilimci.socials.split(' ')[0]}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                                
+                                                <TouchableOpacity onPress={() => Linking.openURL(`https://twitter.com/${katilimci.socials.split(' ')[1]}`)}>
+                                                    <Text style={{fontSize:13, fontWeight:'400', color: '#rgb(41, 64, 153)'}}>
+                                                        <Text style={{color: 'black',fontWeight:'600'}}>X:</Text> {katilimci.socials.split(' ')[1]}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => Linking.openURL(`https://linkedin.com/in/${katilimci.socials.split(' ')[2]}`)}>
+                                                    <Text style={{fontSize:13, fontWeight:'400', color: '#rgb(41, 64, 153)'}}>
+                                                        <Text style={{color: 'black',fontWeight:'600'}}>Linkedin:</Text> {katilimci.socials.split(' ' )[2]}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => Linking.openURL(`https://facebook.com/${katilimci.socials.split(' ')[3]}`)}>
+                                                    <Text style={{fontSize:13, fontWeight:'400', color: '#rgb(41, 64, 153)'}}>
+                                                        <Text style={{color: 'black',fontWeight:'600'}}>Facebook:</Text> {katilimci.socials.split(' ')[3]}
+                                                    </Text>
+                                                </TouchableOpacity>
                                             </View>
                                         )}
                                         </View>
                                     ))}
                                     </ScrollView>
-
-
-                               
-
-
-
-
-
                             </View>
-                            
                     </Modal>
                 </View>
             ))}

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect  } from "react";
 import { Image, Linking, Modal, TouchableWithoutFeedback, ScrollView, Text, View, TouchableOpacity } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 import { FlatList } from "react-native-gesture-handler";
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Podcastler({ navigation }) {
@@ -13,11 +13,12 @@ export default function Podcastler({ navigation }) {
     const [searchResults, setSearchResults] = useState([]);
     const [podcastData, setPodcastData] = useState([]);
 
-    useEffect(() => {
+    useEffect (() => { 
         const fetchPodcasts = async () => {
-            try {
-                const accessToken = await AsyncStorage.getItem('accesToken');
-                const response = await fetch(`http://${xxx}:8080/podcasts/all_podcasts`, {
+            const accessToken = await AsyncStorage.getItem('accesToken');
+    console.log(ip_adress);
+    try {
+                const response = await fetch(`http://${ip_adress}:8080/podcasts/all_podcasts`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,

@@ -1,10 +1,10 @@
-import React, {useState,useEffect } from "react";
+import React, {useState,useEffect  } from "react";
 import { Image, ScrollView, Text, TextInput, View, TouchableOpacity, TouchableWithoutFeedback, StatusBar, Modal, Linking } from "react-native";
 import { Searchbar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
 import { FlatList } from "react-native-gesture-handler";
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Contacts({navigation}) {
@@ -14,11 +14,11 @@ export default function Contacts({navigation}) {
     const [searchResults, setSearchResults] = useState([]);
     const [profilData, setprofilData] = useState([]);
 
-    useEffect(() => {
+    useEffect (() => {
         const fetchprofils = async () => {
             try {
                 const accessToken = await AsyncStorage.getItem('accesToken');
-                const response = await fetch(`http://${xxx}:8080/users/lists`, {
+                const response = await fetch(`http://${ip_adress}:8080/users/lists`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -33,7 +33,7 @@ export default function Contacts({navigation}) {
         };
 
         fetchprofils();
-    }, []);
+    }, []); 
 
     const handleSearch = (query) => {
         setSearchQuery(query);

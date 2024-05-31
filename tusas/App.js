@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useCallback }  from 'react';
+import React, { useEffect , useState, useCallback }  from 'react';
 import {  Text, View, TouchableOpacity , Image, BackHandler, Alert} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, Header } from '@react-navigation/stack';
@@ -26,7 +26,7 @@ import Takvim from './pages/Takvim';
 import Constants from 'expo-constants';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
@@ -139,7 +139,7 @@ function HomeStack({navigation}){
 function ContactStack({navigation}){
     return ( 
         <Stack.Navigator >
-            <Stack.Screen name='Kisiler' component={Contact} options={{headerStyle: { height: 120},
+            <Stack.Screen name='Kişiler' component={Contact} options={{headerStyle: { height: 120},
                                     headerTitleAlign: 'center',
                                     headerTitleStyle:{fontSize:25, fontWeight:'700'},
                                     headerRight: () => (<TouchableOpacity onPress={() => navigation.openDrawer()}>
@@ -197,7 +197,7 @@ function Main({navigation}){
             try {
                 const accessToken = await AsyncStorage.getItem('accesToken');
                 console.log(accessToken)
-                const response = await fetch(`http://${xxx}:8080/users/user`, {
+                const response = await fetch(`http://${ip_adress}:8080/users/user`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -221,14 +221,11 @@ function Main({navigation}){
     );
 
     const handleLogout = async () => {
-        await AsyncStorage.removeItem('accesToken');
-
+        
         try {
             const token = await AsyncStorage.getItem('accesToken');
             const refreshToken = await AsyncStorage.getItem('refreshToken');
-
-            
-            const response = await fetch(`http://${xxx}:8080/logout`, {
+            const response = await fetch(`http://${ip_adress}:8080/logout`, {
                 method: 'POST',
                 headers: {
                      'Authorization': `Bearer ${token}`,
@@ -240,9 +237,11 @@ function Main({navigation}){
             });
 
             navigation.reset({
-                index: refreshToken,
+                index: 0,
                 routes: [{ name: 'Login' }],
             });
+            await AsyncStorage.removeItem('accesToken');
+            await AsyncStorage.removeItem('refreshToken');
     
             if (!response.ok) {
                 throw new Error('Çıkış yapılırken bir hata oluştu');
@@ -423,7 +422,7 @@ function Main({navigation}){
 export default function App() {
     const [isSignedIn, setIsSignedIn] = useState(null);
 
-    useEffect(() => {
+    useEffect (() => {
         const checkToken = async () => {
             try {
                 const accessToken = await AsyncStorage.getItem('accesToken');

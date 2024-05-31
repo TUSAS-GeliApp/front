@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect , useState } from "react";
 import { Image, ScrollView, Text, TextInput, View, TouchableOpacity, Alert, StatusBar } from "react-native";
 
 import { FlatList } from "react-native-gesture-handler";
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
@@ -22,36 +22,35 @@ export default function Homepage({navigation}) {
         return matches ? matches[1] : null;
       };
 
-       
       const [etkinlikler, setEtkinlikler] = useState([]);
       const [podcastler, setPodcastler] = useState([]);
       const [bultenler, setBultenler] = useState([]);
       const [videolar, setVideolar] = useState([]);
   
       
-      useEffect(() => {
-        const fetchAllData = async () => {
+      useEffect (() => {
 
+        const fetchAllData = async () => {
             const token = await AsyncStorage.getItem('accesToken');
             try {
                 const responses = await Promise.all([
-                    fetch(`http://${xxx}:8080/events/all_events`, {
+                    fetch(`http://${ip_adress}:8080/events/all_events`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
                     }),
-                    fetch(`http://${xxx}:8080/podcasts/all_podcasts`, {
+                    fetch(`http://${ip_adress}:8080/podcasts/all_podcasts`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
                     }),
                     
-                    fetch(`http://${xxx}:8080/videos/all_videos`, {
+                    fetch(`http://${ip_adress}:8080/videos/all_videos`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },
                     }),
-                     fetch(`http://${xxx}:8080/newsletter/all_newsletters`, {
+                     fetch(`http://${ip_adress}:8080/newsletter/all_newsletters`, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                         },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect  } from "react";
 import { Image, Linking , Modal, TouchableWithoutFeedback, ScrollView, Text, Platform, View, TouchableOpacity, KeyboardAvoidingView, Alert } from "react-native";
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
@@ -8,7 +8,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { Content } from "antd/es/layout/layout";
 import moment from "moment";
 
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Etkinlikler({navigation}) {
@@ -94,16 +94,14 @@ export default function Etkinlikler({navigation}) {
     };
  
     const [events, setEvents] = useState([]);
-    const [isEventInCalendar, setIsEventInCalendar] = useState([]);
+    const [isEventInCalendar, setIsEventInCalendar] = useState({});
 
-    useEffect(() => {
+    useEffect (() => {
         const fetchEvents = async () => {
-            
             try {
                 const token = await AsyncStorage.getItem('accesToken');
-                console.log(token)
     
-                const calendarResponse = await fetch(`http://${xxx}:8080/calender/all_event`, {
+                const calendarResponse = await fetch(`http://${ip_adress}:8080/calender/all_event`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -115,10 +113,8 @@ export default function Etkinlikler({navigation}) {
                 }
     
                 const calendarEvents = await calendarResponse.json();
-
     
-                // Etkinlikleri al
-                const eventsResponse = await fetch(`http://${xxx}:8080/events/tum_etkinlikler`, {
+                const eventsResponse = await fetch(`http://${ip_adress}:8080/events/tum_etkinlikler`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -133,12 +129,20 @@ export default function Etkinlikler({navigation}) {
                 const updatedEvents = eventData.map(event => {
                     const isEventInCalendar = calendarEvents.some(
                         calEvent => calEvent.event_id === event.id
+
                     );
+
                     return { ...event, isEventInCalendar };
                 });
     
-                setEvents(updatedEvents);
+                const eventCalendarStatus = {};
+                updatedEvents.forEach(event => {
+                    eventCalendarStatus[event.id] = event.isEventInCalendar;
+                });
     
+                setEvents(updatedEvents);
+                setIsEventInCalendar(eventCalendarStatus);
+
             } catch (error) {
                 console.error('Error fetching events:', error);
             }
@@ -146,14 +150,37 @@ export default function Etkinlikler({navigation}) {
     
         fetchEvents();
     }, []);
-    
-    
+     
 
-    const handleHeartPress = async (item) => {
+    const [imageUrls, setImageUrls] = useState({});
+
+    const handleGetImage = async (item_id) => {
         try {
             const token = await AsyncStorage.getItem('accesToken');
-            
-            const response = await fetch(`http://${xxx}:8080/calender/all_event`, {
+            const imageResponse = await fetch(`http://${ip_adress}:8080/events/photos/${item_id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (!imageResponse.ok) {
+                throw new Error('Network response for image was not ok');
+            }
+
+            const blob = await imageResponse.blob();
+            const url = URL.createObjectURL(blob);
+            setImageUrls(prevState => ({ ...prevState, [item_id]: url }));
+        } catch (error) {
+            console.error('Error fetching events:', error);
+        }
+    };
+
+    useEffect(() => {
+        events.forEach(event => handleGetImage(event.id));
+    }, [events]);
+    const handleHeartPress = async (item) => { 
+        try {
+            const token = await AsyncStorage.getItem('accesToken');
+            const response = await fetch(`http://${ip_adress}:8080/calender/all_event`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -165,14 +192,20 @@ export default function Etkinlikler({navigation}) {
             }
     
             const calendarEvents = await response.json();
-            const isEventInCalendar = calendarEvents.some(event => event.name === item.event_name && event.date === item.event_date.split('/')[0]);
-
+            const isEventInCalendar = calendarEvents.some(event => event.event_id === item.id);
+            setIsEventInCalendar(prevState => ({ ...prevState, [item.id]: !isEventInCalendar }));
+    
             if (isEventInCalendar) {
-                const deleteResponse = await fetch(`http://${xxx}:8080/calender/${item.id}/event`, {
+                const eventInfo = {
+                    event_id: item.id,
+                };
+                const deleteResponse = await fetch(`http://${ip_adress}:8080/calender/event`, {
                     method: 'DELETE',
                     headers: {
+                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
-                    }
+                    },
+                    body: JSON.stringify(eventInfo)
                 });
     
                 if (!deleteResponse.ok) {
@@ -182,11 +215,9 @@ export default function Etkinlikler({navigation}) {
                 Alert.alert(`Takvimden Çıkarıldı!!\n \n ${item.event_name}`);
             } else {
                 const eventInfo = {
-                    name: item.event_name, 
-                    date: item.event_date.split('/')[0]
+                    event_id: item.id,
                 };
-                
-                const addResponse = await fetch(`http://${xxx}:8080/calender/${item.id}/event`, {
+                const addResponse = await fetch(`http://${ip_adress}:8080/calender/event`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -202,7 +233,7 @@ export default function Etkinlikler({navigation}) {
                 Alert.alert(`Takvime Eklendi!!\n \n ${item.event_name}`);
             }
     
-            const updatedCalendarEvents = await fetch(`http://${xxx}:8080/calender/all_event`, {
+            const updatedCalendarEvents = await fetch(`http://${ip_adress}:8080/calender/all_event`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -214,11 +245,14 @@ export default function Etkinlikler({navigation}) {
             }
     
             const updatedEvents = await updatedCalendarEvents.json();
-            const updatedIsEventInCalendar = updatedEvents.some(event => event.name === item.event_name && event.date === item.event_date.split('/')[0]);
-            
+
+            const updatedIsEventInCalendar = {};
+            updatedEvents.forEach(event => {
+                updatedIsEventInCalendar[event.event_id] = true;
+            });
             setEvents(prevEvents => prevEvents.map(event => {
                 if (event.id === item.id) {
-                    return { ...event, isEventInCalendar: updatedIsEventInCalendar };
+                    return { ...event, isEventInCalendar: updatedIsEventInCalendar[event.id] };
                 }
                 return event;
             }));
@@ -227,6 +261,7 @@ export default function Etkinlikler({navigation}) {
             console.error('Takvim işlemi hatası:', error);
         }
     };
+    
     
     
     
@@ -272,7 +307,7 @@ export default function Etkinlikler({navigation}) {
                             Sonuç Bulunamadı
                         </Text>
                     )}
-
+   
                     <Modal
                         animationType="slide"
                         transparent={true}
@@ -302,10 +337,17 @@ export default function Etkinlikler({navigation}) {
                                                             {renderEventContent(selectedItem)}
                                                             
 
-                                                            <Image
-                                                                style={{ height: 600, width: '100%',resizeMode:'contain', marginVertical:20 }}
-                                                                source={images[selectedItem.imageUri]}
-                                                            />
+                                                            
+                                                            {imageUrls[selectedItem.id] ? (
+                                                                <Image
+                                                                    style={{ height: 600, width: '100%',resizeMode:'contain', marginVertical:20 }}
+                                                                    source={{ uri: imageUrls[selectedItem.id] }}
+                                                                />
+                                                            ) : (
+                                                                <View style={{ height: 300, width: '100%', borderRadius: 10, backgroundColor: '#ccc', justifyContent: 'center', alignItems: 'center' }}>
+                                                                    <Text>Loading...</Text>
+                                                                </View>
+                                                            )}
                                                             {selectedItem.konum ? (
                                                                 <View style={{height:500}}>
                                                                         {/* To run this without expo check https://docs.expo.dev/versions/latest/sdk/map-view/ */}
@@ -385,7 +427,11 @@ export default function Etkinlikler({navigation}) {
                                                                             style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }} 
                                                                             onPress={() => setIsContactDetailsVisible(prevState => ({ ...prevState, [participant.id]: !prevState[participant.id] }))}
                                                                         >
-                                                                            <Ionicons name="person" size={24} color="black" style={{ marginRight: 8 }} />
+                                                                            
+                                                                            <Image
+                                                                                source={{ uri: participant.photo }}
+                                                                                style={{ width: 70, height: 70, borderRadius:70, marginRight:30}}
+                                                                            />
                                                                             <View>
                                                                                 <Text style={{ fontSize: 16 }}>{participant.name}</Text>
                                                                                 <Text style={{ fontSize: 14, color: '#888' }}>{participant.info.split(',')[0]}</Text>
@@ -394,7 +440,7 @@ export default function Etkinlikler({navigation}) {
                                                                         {isContactDetailsVisible[participant.id] && (
                                                                             <View style={{ marginTop: 8, marginLeft: 10, width:'80%' }}>
 
-                                                                                <TouchableOpacity onPress={() => Linking.openURL(`https://instagram.com/${participant.info.split(',')[1]}`)}>
+                                                                                <TouchableOpacity onPress={() => Linking.openURL(`https://instagram.com/@${participant.info.split(',')[1]}`)}>
                                                                                     <Text style={{fontSize:15, fontWeight:'400', color: '#rgb(41, 64, 153)', marginBottom:10}}>
                                                                                         <Text style={{color: 'black',fontWeight:'bold'}}>Instagram:</Text> {participant.info.split(',')[1]}
                                                                                     </Text>
@@ -448,21 +494,31 @@ export default function Etkinlikler({navigation}) {
 
                             <View style={{ alignItems: 'center' }}>
 
-                            <Text style={{ height: 0, backgroundColor: 'black', width: '100%', marginVertical: 30 }} />
+                            <Text style={{ height: 0, backgroundColor: 'black', width: '100%', marginVertical: 10 }} />
 
                             <View style={{ width: '100%', paddingHorizontal: 20 }}>
                                 <TouchableOpacity onPress={() => { setModalVisible(true); setSelectedItem(item) }} >
                                     <View style={{ height: 300, alignItems: 'center', borderRadius: 10, backgroundColor: '#b9b9b9' }}>
-                                        <Image
-                                            style={{ height: 300, width: '100%', borderRadius: 10 }}
-                                            source={images[item.imageUri]}
-                                        />
+                                        {imageUrls[item.id] ? (
+                                            <Image
+                                                style={{ height: 300, width: '100%', borderRadius: 10 }}
+                                                source={{ uri: imageUrls[item.id] }}
+                                            />
+                                        ) : (
+                                            <View style={{ height: 300, width: '100%', borderRadius: 10, backgroundColor: '#ccc', justifyContent: 'center', alignItems: 'center' }}>
+                                                <Text>Loading...</Text>
+                                            </View> 
+                                        )}
                                         <View style={{ position: 'absolute', top: 10, right: 10 }}>
                                             <TouchableOpacity onPress={() => handleHeartPress(item)} style={{ flexDirection: 'row', justifyContent: 'center', backgroundColor:'rgba(256,256,256, 0.6)', paddingLeft:10, paddingVertical:10, borderRadius:10 }}>
 
-                                                
-                                                    {item.isEventInCalendar ? <Ionicons name="remove-circle" size={30} color={item.isEventInCalendar ? 'green' : 'red'} style={{ marginRight: 10 }} /> : <Ionicons name="add-circle" size={30} color={item.isEventInCalendar ? 'green' : 'red'} style={{ marginRight: 10 }} />}
-                                                
+
+                                            <Ionicons
+                                                    name={isEventInCalendar[item.id] ? 'heart' : 'heart-outline'}
+                                                    size={30}
+                                                    color={isEventInCalendar[item.id] ? 'red' : 'black'}
+                                                    style={{ marginRight: 10 }}
+                                                />
                                                 
                                             </TouchableOpacity>
                                         </View>

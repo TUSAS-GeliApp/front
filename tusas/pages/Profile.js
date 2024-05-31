@@ -1,10 +1,10 @@
-import React, {useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect , useCallback } from "react";
 import {  Linking,Image, ScrollView, Text,  View, TouchableOpacity, Switch, Alert, LayoutAnimation } from "react-native";
 import Constants from 'expo-constants'
 import {  Ionicons } from '@expo/vector-icons';
 import { Avatar } from 'react-native-paper';
 import { FlatList } from "react-native-gesture-handler";
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -16,7 +16,7 @@ export default function Profile({navigation}) {
         const fetchprofils = async () => {
             try {
                 const accessToken = await AsyncStorage.getItem('accesToken');
-                const response = await fetch(`http://${xxx}:8080/users/user`, {
+                const response = await fetch(`http://${ip_adress}:8080/users/user`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -40,14 +40,13 @@ export default function Profile({navigation}) {
         <View style={{flex:1}}>
             
             <View style={{backgroundColor:'rgba(255, 255, 255, 1)'}}>
-                
                 <View style={{position: "absolute",zIndex:1}}>
                     <TouchableOpacity  style={{padding: 5, top: Constants.statusBarHeight, left:'5%',flexDirection:'row', justifyContent:'flex-end', alignItems:'center', }} onPress={() => navigation.navigate("Ana sayfa")}>
                         <Ionicons name="chevron-back" color="white" style={{fontSize:30}} />
                         <Text style={{color:'white',fontWeight:'500',fontSize:18}}>{"Anasayfa"}</Text>
                     </TouchableOpacity>
                 </View>
-                
+
                 <View style={{ position: 'absolute', height:500,width:"100%", backgroundColor: 'black',alignItems: 'center' }}>
                     <Image
                         source={require('../assets/profil_back.png')}

@@ -1,8 +1,8 @@
-import React,{ useState, useEffect } from "react";
+import React,{ useState, useEffect  } from "react";
 import { Image, Button, Modal, Pressable, ScrollView, Text, TextInput, View, TouchableOpacity, Switch, Alert } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 
 export default function Signup({navigation}) {
 
@@ -46,7 +46,7 @@ export default function Signup({navigation}) {
             });
 
             // Sunucuya POST isteği gönder
-            const response = await fetch(`http://${xxx}:8080/login/sign_up`, {
+            const response = await fetch(`http://${ip_adress}:8080/login/sign_up`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

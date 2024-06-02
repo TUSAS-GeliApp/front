@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect , useCallback } from "react";
 import { ScrollView, Text, View } from "react-native";
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { Ionicons } from '@expo/vector-icons';
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -12,9 +12,8 @@ export default function Takvim({ navigation }) {
     const fetchCalendarData = async () => {
         try {
             const token = await AsyncStorage.getItem('accesToken');
-
-            // Takvim etkinliklerini al
-            const eventsResponse = await fetch(`http://${xxx}:8080/calender/all_event`, {
+ 
+            const eventsResponse = await fetch(`http://${ip_adress}:8080/calender/all_event`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -28,7 +27,7 @@ export default function Takvim({ navigation }) {
             const eventsData = await eventsResponse.json();
 
             // Takvim programlarını al
-            const programsResponse = await fetch(`http://${xxx}:8080/calender/all_program`, {
+            const programsResponse = await fetch(`http://${ip_adress}:8080/calender/all_program`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -43,12 +42,13 @@ export default function Takvim({ navigation }) {
 
             // İki yanıtı birleştirerek tek bir dizi oluştur
             const combinedData = [...eventsData, ...programsData];
+
             setCalendarData(combinedData);
         } catch (error) {
             console.error('Error fetching calendar data:', error);
         }
     };
-
+ 
     useFocusEffect(
         useCallback(() => {
             fetchCalendarData();
@@ -57,8 +57,12 @@ export default function Takvim({ navigation }) {
 
     // Tüm etkinlikleri takvimden çekme
     const markedDates = {};
+
     calendarData.forEach(event => {
-        const formattedDate = event.date.split('/')[0].split('.').reverse().join('-');
+
+        const formattedDate = event.event_date.split("/")[0].split('.').reverse().join('-');
+        console.log( formattedDate );
+
         markedDates[formattedDate] = { selected: true, disableTouchEvent: true, selectedDotColor: 'orange', textColor: 'red' };
     });
 
@@ -75,7 +79,6 @@ export default function Takvim({ navigation }) {
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: 'white', paddingHorizontal: 20 }}>
-                {console.log(markedDates)}
 
                 <Calendar
                     markedDates={markedDates}
@@ -114,7 +117,8 @@ export default function Takvim({ navigation }) {
                             <Ionicons name="ellipse" size={24} color="rgb(237, 52, 53)" />
                             <Text style={{ fontWeight: 'bold', fontSize: 17, marginLeft: 10 }}>{event.name}</Text>
                         </View>
-                        <Text style={{ textAlign: 'left', fontSize: 13, paddingRight: 10, paddingLeft: 29, color: "rgba(237, 52, 53,0.6)"}}> {event.date}</Text>
+                        <Text style={{ textAlign: 'left', fontSize: 13, paddingRight: 10, paddingLeft: 29, color: "rgba(237, 52, 53,0.6)"}}> {event.event_date.split("/")[0]} / {event.event_date.split("/")[1]}</Text>
+                        
                     </View>
                 ))}
             </ScrollView>

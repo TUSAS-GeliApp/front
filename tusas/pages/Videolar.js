@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { Image, Modal, TouchableWithoutFeedback, ScrollView, Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { Searchbar } from 'react-native-paper';
 import { FlatList } from "react-native-gesture-handler";
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Videolar({ navigation }) {
@@ -14,11 +14,12 @@ export default function Videolar({ navigation }) {
     const [videolarData, setVideolarData] = useState([]);
     const [videoInfo, setVideoInfo] = useState(null);
 
-    useEffect(() => {
+    useEffect (() => {
+
         const fetchVideos = async () => {
+            const accessToken = await AsyncStorage.getItem('accesToken');
             try {
-                const accessToken = await AsyncStorage.getItem('accesToken');
-                const response = await fetch(`http://${xxx}:8080/videos/all_videos`, {
+                const response = await fetch(`http://${ip_adress}:8080/videos/all_videos`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -36,7 +37,7 @@ export default function Videolar({ navigation }) {
         fetchVideos();
     }, []);
 
-    useEffect(() => {
+    useEffect (() => {
         const fetchVideoInfo = async () => {
             if (itemId) {
                 const selectedVideo = videolarData.find(video => video.videos_id === itemId);

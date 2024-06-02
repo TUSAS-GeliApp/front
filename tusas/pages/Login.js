@@ -3,7 +3,7 @@ import { Image, Button, Modal, Pressable, Text, TextInput, View, Alert } from "r
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 
 export default function Login({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
@@ -16,8 +16,10 @@ export default function Login({ navigation }) {
     };
 
     const handleLogin = async () => {
+    console.log(ip_adress);
+
         try {
-            const response = await fetch(`http://${xxx}:8080/login`, {
+            const response = await fetch(`http://${ip_adress}:8080/login`, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -35,7 +37,6 @@ export default function Login({ navigation }) {
                 if (accesToken && refreshToken) { // Check if accessToken and refreshToken are not undefined
                     await AsyncStorage.setItem('accesToken', accesToken);
                     await AsyncStorage.setItem('refreshToken', refreshToken);
-                    Alert.alert('Login Successful', 'You have been successfully logged in!');
                     navigation.navigate('Home');
                 } else {
                     Alert.alert('Login Failed', 'Invalid access or refresh token received from the server.');
@@ -80,7 +81,7 @@ export default function Login({ navigation }) {
         try {
     
             // Sunucuya e-posta adresini gönder
-            const response = await fetch(`http://${xxx}:8080/users/request-password-reset`, {
+            const response = await fetch(`http://${ip_adress}:8080/users/request-password-reset`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -106,7 +107,7 @@ export default function Login({ navigation }) {
         try {
     
             // Sunucuya OTP kodunu ve yeni şifreyi gönder
-            const response = await fetch(`http://${xxx}:8080/users/reset-password`, {
+            const response = await fetch(`http://${ip_adress}:8080/users/reset-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -143,10 +144,10 @@ export default function Login({ navigation }) {
                 }} />
 
             <Text style={{ fontSize: 25, fontFamily: 'Times New Roman', paddingBottom: 10 }}>
-                Sign In
+                Giriş Yap
             </Text>
             <Text style={{ fontSize: 15, fontFamily: 'Times New Roman', color: '#888' }}>
-                Hi there! Nice to see you again.
+                Hoşgeldiniz! Sizi aramızda gördüğümüze sevindik.
             </Text>
             <Text style={{ marginTop: 40, marginBottom: 10, color: '#rgb(237,52,53)', fontWeight: '600' }}>
                 Email
@@ -159,7 +160,7 @@ export default function Login({ navigation }) {
                 justifyContent: "center"
             }}>
                 <TextInput
-                    placeholder="Your email address"
+                    placeholder="Email adresinizi giriniz"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
@@ -167,7 +168,7 @@ export default function Login({ navigation }) {
                 />
             </View>
             <Text style={{ marginBottom: 10, color: '#rgb(237,52,53)', fontWeight: '600' }}>
-                Password
+                Şifre
             </Text>
             <View style={{
                 flexDirection: 'row', justifyContent: 'space-between',
@@ -177,7 +178,8 @@ export default function Login({ navigation }) {
                 marginBottom: 20
             }}>
                 <TextInput
-                    placeholder="Your password"
+                    placeholder="Şifrenizi  giriniz"
+
                     secureTextEntry={!showPassword}
                     value={password}
                     onChangeText={setPassword}
@@ -199,7 +201,7 @@ export default function Login({ navigation }) {
                 }]}>
                 {({ pressed }) => (
                     <Text style={{ padding: 20, margin: 1, textAlign: 'center', color: 'white', fontWeight: '900' }}>
-                        {pressed ? 'w' : 'Sign in'}
+                        {pressed ? 'w' : 'Giriş Yap'}
                     </Text>
                 )}
             </Pressable>
@@ -257,17 +259,17 @@ export default function Login({ navigation }) {
                         </Pressable>
                         <Button
                             onPress={() => setModalVisible(false)}
-                            title="Back to Sign In"
+                            title="Girşe geri dön!"
                             color='#666' />
                     </KeyboardAwareScrollView>
                 </Modal>
                 <Button
                     onPress={() => setModalVisible(true)}
-                    title="Forgot Password?"
+                    title="Şifremi unuttum?"
                     color='#666' />
                 <Button
                     onPress={() => navigation.navigate('Signup')}
-                    title="Create an account"
+                    title="Hesap Oluşturun!"
                     color="#rgb(237,52,53)" />
                 <Modal
                     animationType="slide"

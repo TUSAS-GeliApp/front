@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect , useCallback } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, StatusBar, Image, FlatList, Modal, Keyboard } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { xxx } from "@env";
+import { ip_adress } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useFocusEffect } from '@react-navigation/native';
@@ -31,7 +31,7 @@ export default function Settings({ navigation }) {
         const fetchprofils = async () => {
             try {
                 const accessToken = await AsyncStorage.getItem('accesToken');
-                const response = await fetch(`http://${xxx}:8080/users/user`, {
+                const response = await fetch(`http://${ip_adress}:8080/users/user`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,
@@ -59,7 +59,7 @@ export default function Settings({ navigation }) {
             } catch (error) {
                 console.error('Error fetching profil data:', error);
             }
-        };
+        }; 
         fetchprofils();
     };
     useFocusEffect(
@@ -71,7 +71,7 @@ export default function Settings({ navigation }) {
     const handleSave = async () => {
         try {
             const accessToken = await AsyncStorage.getItem('accesToken');
-            const response = await fetch(`http://${xxx}:8080/users`, {
+            const response = await fetch(`http://${ip_adress}:8080/users`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ export default function Settings({ navigation }) {
             setModalVisible(false);
             
             const accessToken = await AsyncStorage.getItem('accesToken');
-            const response = await fetch(`http://${xxx}:8080/users/pp`, {
+            const response = await fetch(`http://${ip_adress}:8080/users/pp`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
